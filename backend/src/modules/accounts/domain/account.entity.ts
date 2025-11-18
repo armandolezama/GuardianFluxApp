@@ -10,7 +10,7 @@ export interface AccountProps {
 }
 
 export class Account {
-  constructor(private props: AccountProps) {}
+  constructor(private props: AccountProps) { }
 
   get id() {
     return this.props.id;
@@ -34,5 +34,16 @@ export class Account {
 
   get createdAt() {
     return this.props.createdAt;
+  }
+  canDebit(amount: number): boolean {
+    return this.props.balance >= amount;
+  }
+
+  debit(amount: number) {
+    this.props.balance -= amount;
+  }
+
+  credit(amount: number) {
+    this.props.balance += amount;
   }
 }

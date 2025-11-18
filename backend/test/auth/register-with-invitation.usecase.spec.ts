@@ -53,9 +53,19 @@ class InMemoryAccountRepository implements AccountRepository {
   public accounts: Account[] = [];
 
   async save(account: Account): Promise<void> {
-    this.accounts.push(account);
+    const idx = this.accounts.findIndex((a) => a.id === account.id);
+    if (idx === -1) {
+      this.accounts.push(account);
+    } else {
+      this.accounts[idx] = account;
+    }
   }
 
+  async findByAccountNumber(accountNumber: string): Promise<Account | null> {
+    return this.accounts.find((a) => a.accountNumber === accountNumber) ?? null;
+  }
+
+  // helper solo para tests
   findByUserId(userId: string): Account | undefined {
     return this.accounts.find((a) => a.userId === userId);
   }
