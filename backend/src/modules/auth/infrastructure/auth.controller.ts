@@ -1,7 +1,20 @@
-import { Body, Controller, Post, BadRequestException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  BadRequestException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { RegisterWithInvitationUseCase } from '../application/register-with-invitation.usecase';
-import { InvitationExpiredError, InvitationAlreadyUsedError } from '../../invitations/domain/errors';
+import {
+  InvitationExpiredError,
+  InvitationAlreadyUsedError,
+} from '../../invitations/domain/errors';
 import { EmailAlreadyInUseError } from '../../users/domain/errors';
+import {
+  LoginWithEmailAndPasswordUseCase,
+  InvalidCredentialsError,
+} from '../application/login-with-email-and-password.usecase';
 
 class RegisterWithInvitationDto {
   code!: string;
@@ -10,10 +23,17 @@ class RegisterWithInvitationDto {
   password!: string;
 }
 
+class LoginDto {
+  email!: string;
+  password!: string;
+}
+
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly registerWithInvitationUseCase: RegisterWithInvitationUseCase,
+    private readonly loginWithEmailAndPasswordUseCase: LoginWithEmailAndPasswordUseCase,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Post('register-with-invitation')
@@ -28,7 +48,17 @@ export class AuthController {
         password,
       });
 
+      // Opcional: emitir token también aquí.
+      const payload = {
+        sub: result.user.id,
+        email: result.user.email,
+        roles: result.user.roles,
+      };
+
+      const accessToken = this.jwtService.sign(payload);
+
       return {
+        accessToken,
         user: result.user,
         account: result.account,
       };
@@ -41,6 +71,36 @@ export class AuthController {
         throw new BadRequestException(err.message);
       }
 
+      throw err;
+    }
+  }
+
+  @Post('login')
+  async login(@Body() body: LoginDto) {
+    const { email, password } = body;
+
+    try {
+      const result = await this.loginWithEmailAndPasswordUseCase.execute({
+        email,
+        password,
+      });
+
+      const payload = {
+        sub: result.user.id,
+        email: result.user.email,
+        roles: result.user.roles,
+      };
+
+      const accessToken = this.jwtService.sign(payload);
+
+      return {
+        accessToken,
+        user: result.user,
+      };
+    } catch (err) {
+      if (err instanceof InvalidCredentialsError) {
+        throw new BadRequestException('Credenciales inválidas');
+      }
       throw err;
     }
   }

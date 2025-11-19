@@ -8,6 +8,7 @@ import { AccountRepository } from '../../accounts/domain/account.repository';
 import { EmailAlreadyInUseError } from '../../users/domain/errors';
 import { User } from '../../users/domain/user.entity';
 import { Account } from '../../accounts/domain/account.entity';
+import { PasswordHasher } from '../domain/password-hasher';
 
 interface RegisterWithInvitationInput {
   code: string;
@@ -30,10 +31,6 @@ interface RegisterWithInvitationOutput {
     balance: number;
     currency: string;
   };
-}
-
-export interface PasswordHasher {
-  hash(raw: string): Promise<string>;
 }
 
 export interface IdGenerator {
@@ -95,7 +92,7 @@ export class RegisterWithInvitationUseCase {
       id: accountId,
       userId: user.id,
       accountNumber,
-      balance: 1000, //TODO: delete this hardcoded initialization
+      balance: 0, //TODO: delete this hardcoded initialization
       currency: 'MXN',
       createdAt: now,
     });
