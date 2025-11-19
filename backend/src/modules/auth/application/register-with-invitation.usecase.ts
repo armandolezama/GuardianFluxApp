@@ -95,7 +95,7 @@ export class RegisterWithInvitationUseCase {
       id: accountId,
       userId: user.id,
       accountNumber,
-      balance: 0,
+      balance: 1000,
       currency: 'MXN',
       createdAt: now,
     });

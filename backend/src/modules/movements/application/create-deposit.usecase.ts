@@ -42,7 +42,7 @@ export class CreateDepositUseCase {
       input;
 
     const origin = await this.accountRepository.findByAccountNumber(originAccountNumber);
-    const dest = await this.accountRepository.findByAccountNumber(destinationAccountNumber);
+    const dest = await this.accountRepository.findByAccountNumber(destinationAccountNumber);    
 
     if (!origin || !dest) {
       throw new DestinationAccountNotFoundError();

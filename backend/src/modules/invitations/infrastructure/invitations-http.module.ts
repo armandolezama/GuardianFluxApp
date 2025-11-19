@@ -7,18 +7,20 @@ import { InvitationRepository } from '../domain/invitation.repository';
 @Module({
   controllers: [InvitationsController],
   providers: [
-    // Binding del puerto (InvitationRepository) al adaptador in-memory
     {
-      provide: 'InvitationRepository', // token de Nest
+      provide: 'InvitationRepository',
       useClass: InMemoryInvitationRepository,
     },
-    // Caso de uso como servicio de aplicación
     {
       provide: ValidateInvitationUseCase,
       useFactory: (repo: InvitationRepository) =>
         new ValidateInvitationUseCase(repo),
       inject: ['InvitationRepository'],
     },
+  ],
+  exports: [
+    'InvitationRepository',
+    ValidateInvitationUseCase,
   ],
 })
 export class InvitationsHttpModule {}

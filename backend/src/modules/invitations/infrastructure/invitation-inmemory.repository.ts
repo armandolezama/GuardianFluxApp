@@ -8,24 +8,37 @@ export class InMemoryInvitationRepository implements InvitationRepository {
   private invitations = new Map<string, Invitation>();
 
   constructor() {
-    // Semilla de ejemplo para probar la API
-    const now = new Date();
-    const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 días
+  const now = new Date();
+  const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 días
 
-    const demo = new Invitation({
-      id: 'inv-demo',
-      code: 'INV-DEMO',
-      email: 'demo@example.com',
-      role: 'CUSTOMER',
-      status: InvitationStatus.PENDING,
-      expiresAt: future,
-      usedAt: null,
-      createdByUserId: 'admin-1',
-      createdAt: now,
-    });
+  const inv1 = new Invitation({
+    id: 'inv-1',
+    code: 'INV-USER1',
+    email: 'user1@example.com',
+    role: 'CUSTOMER',
+    status: InvitationStatus.PENDING,
+    expiresAt: future,
+    usedAt: null,
+    createdByUserId: 'admin-1',
+    createdAt: now,
+  });
 
-    this.invitations.set(demo.code, demo);
-  }
+  const inv2 = new Invitation({
+    id: 'inv-2',
+    code: 'INV-USER2',
+    email: 'user2@example.com',
+    role: 'CUSTOMER',
+    status: InvitationStatus.PENDING,
+    expiresAt: future,
+    usedAt: null,
+    createdByUserId: 'admin-1',
+    createdAt: now,
+  });
+
+  this.invitations.set(inv1.code, inv1);
+  this.invitations.set(inv2.code, inv2);
+}
+
 
   async findByCode(code: string): Promise<Invitation | null> {
     return this.invitations.get(code) ?? null;
