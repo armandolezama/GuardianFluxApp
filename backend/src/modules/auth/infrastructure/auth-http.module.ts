@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+// import { APP_GUARD } from '@nestjs/core'; // opcional si quieres RolesGuard global
 import { AuthController } from './auth.controller';
 import { InvitationsHttpModule } from '../../invitations/infrastructure/invitations-http.module';
 import { InMemoryUserRepository } from '../../users/infrastructure/user-inmemory.repository';
@@ -12,6 +14,8 @@ import { RegisterWithInvitationUseCase } from '../application/register-with-invi
 import { BcryptPasswordHasher } from './bcrypt-password-hasher';
 import { PasswordHasher } from '../domain/password-hasher';
 import { LoginWithEmailAndPasswordUseCase } from '../application/login-with-email-and-password.usecase';
+import { JwtStrategy } from './jwt.strategy';
+// import { RolesGuard } from './roles.guard';
 
 class SimpleIdGenerator {
   private counter = 1;
@@ -31,8 +35,9 @@ class SimpleAccountNumberGenerator {
   imports: [
     InvitationsHttpModule,
     AccountsInfraModule,
+    PassportModule,
     JwtModule.register({
-      secret: 'guardianflux-dev-secret', // TODO: mover a env en el futuro
+      secret: 'guardianflux-dev-secret', // TODO env
       signOptions: { expiresIn: '1h' },
     }),
   ],
@@ -41,13 +46,13 @@ class SimpleAccountNumberGenerator {
     // Repos
     { provide: 'UserRepository', useClass: InMemoryUserRepository },
 
-    // Hasher real
+    // Hasher
     {
       provide: 'PasswordHasher',
       useFactory: () => new BcryptPasswordHasher(10),
     },
 
-    // Caso de uso de registro con invitación
+    // Casos de uso
     {
       provide: RegisterWithInvitationUseCase,
       useFactory: (
@@ -75,20 +80,24 @@ class SimpleAccountNumberGenerator {
         'PasswordHasher',
       ],
     },
-
-    // Caso de uso de login
     {
       provide: LoginWithEmailAndPasswordUseCase,
       useFactory: (
         userRepo: UserRepository,
         passwordHasher: PasswordHasher,
-      ) =>
-        new LoginWithEmailAndPasswordUseCase(
-          userRepo,
-          passwordHasher,
-        ),
+      ) => new LoginWithEmailAndPasswordUseCase(userRepo, passwordHasher),
       inject: ['UserRepository', 'PasswordHasher'],
     },
+
+    // Strategy JWT
+    JwtStrategy,
+
+    // Opcional: hacer RolesGuard global
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+    // Si prefieres, lo puedes usar por controlador y no global.
   ],
 })
 export class AuthHttpModule {}

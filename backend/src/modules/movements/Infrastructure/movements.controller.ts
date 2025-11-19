@@ -1,4 +1,11 @@
-import { Body, Controller, Post, BadRequestException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  BadRequestException,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateDepositUseCase } from '../application/create-deposit.usecase';
 import { CreateWithdrawalUseCase } from '../application/create-withdrawal.usecase';
 import {
@@ -6,6 +13,8 @@ import {
   InsufficientFundsError,
   AccountNotFoundError,
 } from '../domain/errors';
+// import { Roles } from '../../auth/infrastructure/roles.decorator';
+// import { RolesGuard } from '../../auth/infrastructure/roles.guard';
 
 export class CreateDepositDto {
   originAccountNumber!: string;
@@ -15,11 +24,12 @@ export class CreateDepositDto {
 }
 
 export class CreateWithdrawalDto {
-  accountId!: string;      // por ahora lo pasamos en el body
+  accountId!: string;
   amount!: number;
   description?: string;
 }
 
+@UseGuards(AuthGuard('jwt')) // Todos los endpoints requieren token
 @Controller('movements')
 export class MovementsController {
   constructor(
@@ -29,7 +39,8 @@ export class MovementsController {
 
   @Post('deposit')
   async deposit(@Body() body: CreateDepositDto) {
-    const { originAccountNumber, destinationAccountNumber, amount, description } = body;
+    const { originAccountNumber, destinationAccountNumber, amount, description } =
+      body;
 
     if (amount <= 0) {
       throw new BadRequestException('Amount must be greater than zero');
