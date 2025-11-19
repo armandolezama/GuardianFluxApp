@@ -14,6 +14,7 @@ import { Account } from '../../src/modules/accounts/domain/account.entity';
 import { AccountRepository } from '../../src/modules/accounts/domain/account.repository';
 import { RegisterWithInvitationUseCase } from '../../src/modules/auth/application/register-with-invitation.usecase';
 import { ValidateInvitationUseCase } from '../../src/modules/invitations/application/validate-invitation.usecase';
+import { PasswordHasher } from '../../src/modules/auth/domain/password-hasher';
 
 // Repos in-memory para TDD
 
@@ -65,6 +66,10 @@ class InMemoryAccountRepository implements AccountRepository {
     return this.accounts.find((a) => a.accountNumber === accountNumber) ?? null;
   }
 
+  async findById(id: string): Promise<Account | null> {
+    return this.accounts.find((a) => a.id === id) ?? null;
+  }
+
   // helper solo para tests
   findByUserId(userId: string): Account | undefined {
     return this.accounts.find((a) => a.userId === userId);
@@ -73,9 +78,14 @@ class InMemoryAccountRepository implements AccountRepository {
 
 // “Servicios” auxiliares
 
-class FakePasswordHasher {
+class FakePasswordHasher implements PasswordHasher {
   async hash(password: string): Promise<string> {
     return `hashed-${password}`;
+  }
+
+  async compare(plain: string, hash: string): Promise<boolean> {
+    // Para las pruebas nos basta con respetar el mismo formato de hash:
+    return hash === `hashed-${plain}`;
   }
 }
 
