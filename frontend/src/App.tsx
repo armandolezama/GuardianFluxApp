@@ -1,6 +1,19 @@
-// frontend/src/App.tsx
-import { AppBar, Box, Container, Toolbar, Typography, Paper, Button } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Container,
+  Toolbar,
+  Typography,
+  Paper,
+  Button,
+} from '@mui/material';
+import { Link as RouterLink, Route, Routes } from 'react-router-dom';
 import { brandColors } from './theme';
+import { HomePage } from './pages/HomePage';
+import { ActivateInvitationPage } from './pages/ActivateInvitationPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { MonitorPage } from './pages/MonitorPage';
 
 function App() {
   return (
@@ -29,43 +42,60 @@ function App() {
             </Typography>
           </Box>
 
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
+          <Typography
+            variant="h6"
+            component={RouterLink}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              fontWeight: 700,
+              textDecoration: 'none',
+              color: 'text.primary',
+            }}
+          >
             GuardianFlux
           </Typography>
 
-          {/* Aquí luego irá el switch de tema y el usuario */}
+          {/* Enlaces rápidos en el header */}
+          <Button
+            color="inherit"
+            component={RouterLink}
+            to="/dashboard"
+            sx={{ mr: 1 }}
+          >
+            Dashboard
+          </Button>
+          <Button
+            color="inherit"
+            component={RouterLink}
+            to="/monitor"
+            sx={{ mr: 1 }}
+          >
+            Monitor
+          </Button>
           <Button variant="outlined" color="primary" size="small">
             Iniciar sesión
           </Button>
         </Toolbar>
       </AppBar>
 
-      {/* Contenido principal */}
+      {/* Contenido principal enrutado */}
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Paper
           elevation={2}
           sx={{
             p: 3,
             borderRadius: 3,
-            borderTop: theme => `4px solid ${theme.palette.secondary.main}`,
+            borderTop: (theme) => `4px solid ${theme.palette.secondary.main}`,
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: 600, mb: 1.5 }}>
-            Bienvenido a GuardianFlux
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 3, color: 'text.secondary' }}>
-            Aquí pronto podrás activar tu invitación, crear tu cuenta y simular movimientos
-            bancarios para tu portafolio.
-          </Typography>
-
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <Button variant="contained" color="primary">
-              Activar invitación
-            </Button>
-            <Button variant="outlined" color="secondary">
-              Ver demo de dashboard
-            </Button>
-          </Box>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/activate" element={<ActivateInvitationPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/monitor" element={<MonitorPage />} />
+          </Routes>
         </Paper>
       </Container>
     </Box>
