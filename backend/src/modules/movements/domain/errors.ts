@@ -11,3 +11,10 @@ export class DestinationAccountNotFoundError extends Error {
     this.name = 'DestinationAccountNotFoundError';
   }
 }
+
+export class AccountNotFoundError extends Error {
+  constructor() {
+    super('Account not found');
+    this.name = 'AccountNotFoundError';
+  }
+}

@@ -2,7 +2,7 @@ import { AccountRepository } from '../../accounts/domain/account.repository';
 import { MovementRepository } from '../domain/movement.repository';
 import { Movement } from '../domain/movement.entity';
 import { MovementType } from '../domain/movement-type.enum';
-import { InsufficientFundsError } from '../domain/errors';
+import { InsufficientFundsError, AccountNotFoundError } from '../domain/errors';
 
 export interface IdGenerator {
   nextId(): string;
@@ -18,6 +18,7 @@ interface CreateWithdrawalOutput {
   account: {
     id: string;
     balance: number;
+    currency: string;
   };
 }
 
@@ -32,18 +33,9 @@ export class CreateWithdrawalUseCase {
   async execute(input: CreateWithdrawalInput): Promise<CreateWithdrawalOutput> {
     const { accountId, amount, description } = input;
 
-    // Para este UC, asumimos que ya tienes cargada la cuenta por fuera
-    // o que extenderás AccountRepository con findById para producción.
-    // En pruebas usamos directamente el helper del in-memory repo.
-    // En producción: añadir método findById y usarlo aquí.
-
-    // @ts-expect-error: en tests usamos un repo con método auxiliar
-    const account = this.accountRepository.getById
-      ? await (this.accountRepository as any).getById(accountId)
-      : null;
-
+    const account = await this.accountRepository.findById(accountId);
     if (!account) {
-      throw new Error('Account not found'); // si quieres puedes crear error específico
+      throw new AccountNotFoundError();
     }
 
     if (!account.canDebit(amount)) {
@@ -71,6 +63,7 @@ export class CreateWithdrawalUseCase {
       account: {
         id: account.id,
         balance: account.balance,
+        currency: account.currency,
       },
     };
   }

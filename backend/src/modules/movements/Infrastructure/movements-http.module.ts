@@ -5,6 +5,7 @@ import { InMemoryMovementRepository } from './movement-inmemory.repository';
 import { AccountRepository } from '../../accounts/domain/account.repository';
 import { MovementRepository } from '../domain/movement.repository';
 import { CreateDepositUseCase } from '../application/create-deposit.usecase';
+import { CreateWithdrawalUseCase } from '../application/create-withdrawal.usecase';
 
 class SimpleIdGenerator {
   private counter = 1;
@@ -26,6 +27,21 @@ class SimpleIdGenerator {
         movementRepo: MovementRepository,
       ) =>
         new CreateDepositUseCase(
+          accountRepo,
+          movementRepo,
+          new SimpleIdGenerator(),
+          () => new Date(),
+        ),
+      inject: ['AccountRepository', 'MovementRepository'],
+    },
+
+    {
+      provide: CreateWithdrawalUseCase,
+      useFactory: (
+        accountRepo: AccountRepository,
+        movementRepo: MovementRepository,
+      ) =>
+        new CreateWithdrawalUseCase(
           accountRepo,
           movementRepo,
           new SimpleIdGenerator(),
