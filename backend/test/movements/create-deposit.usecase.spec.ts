@@ -24,11 +24,17 @@ class InMemoryAccountRepository implements AccountRepository {
     return this.accounts.find(a => a.accountNumber === accountNumber) ?? null;
   }
 
+  async findById(id: string): Promise<Account | null> {
+    return this.accounts.find(a => a.id === id) ?? null;
+  }
+
+  // Helpers sólo para las pruebas
+
   add(account: Account) {
     this.accounts.push(account);
   }
 
-  getByNumber(accountNumber: string) {
+  getByNumber(accountNumber: string): Account | undefined {
     return this.accounts.find(a => a.accountNumber === accountNumber);
   }
 }

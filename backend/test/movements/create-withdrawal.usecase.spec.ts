@@ -1,9 +1,14 @@
+// backend/test/movements/create-withdrawal.usecase.spec.ts
+
 import { Account } from '../../src/modules/accounts/domain/account.entity';
 import { AccountRepository } from '../../src/modules/accounts/domain/account.repository';
 import { Movement } from '../../src/modules/movements/domain/movement.entity';
 import { MovementRepository } from '../../src/modules/movements/domain/movement.repository';
 import { MovementType } from '../../src/modules/movements/domain/movement-type.enum';
-import { InsufficientFundsError } from '../../src/modules/movements/domain/errors';
+import {
+  InsufficientFundsError,
+  AccountNotFoundError,
+} from '../../src/modules/movements/domain/errors';
 import { CreateWithdrawalUseCase } from '../../src/modules/movements/application/create-withdrawal.usecase';
 
 class InMemoryAccountRepository implements AccountRepository {
@@ -16,22 +21,26 @@ class InMemoryAccountRepository implements AccountRepository {
   }
 
   async findByAccountNumber(): Promise<Account | null> {
-    // retiro se hará por accountId o por algo que tú elijas;
-    // aquí no lo usamos, así que puedes lanzar error si se llama.
-    throw new Error('Not implemented for this test');
+    // no lo usamos en estos tests
+    return null;
+  }
+
+  async findById(id: string): Promise<Account | null> {
+    return this.accounts.find(a => a.id === id) ?? null;
   }
 
   add(account: Account) {
     this.accounts.push(account);
   }
 
-  getById(id: string) {
+  getById(id: string): Account | undefined {
     return this.accounts.find(a => a.id === id);
   }
 }
 
 class InMemoryMovementRepository implements MovementRepository {
   public movements: Movement[] = [];
+
   async save(movement: Movement): Promise<void> {
     this.movements.push(movement);
   }
@@ -85,8 +94,20 @@ describe('CreateWithdrawalUseCase', () => {
     const mov = movementRepo.movements[0];
     expect(mov.type).toBe(MovementType.WITHDRAW);
     expect(mov.amount).toBe(200);
+    expect(mov.currency).toBe('MXN');
+    expect(mov.accountId).toBe('acc-1');
 
+    expect(result.account.id).toBe('acc-1');
     expect(result.account.balance).toBe(300);
+  });
+
+  it('debería fallar si la cuenta no existe', async () => {
+    await expect(
+      useCase.execute({
+        accountId: 'acc-NO-EXISTS',
+        amount: 100,
+      }),
+    ).rejects.toBeInstanceOf(AccountNotFoundError);
   });
 
   it('debería fallar si no hay saldo suficiente', async () => {
@@ -94,7 +115,7 @@ describe('CreateWithdrawalUseCase', () => {
       id: 'acc-1',
       userId: 'user-1',
       accountNumber: 'ACC-USER',
-      balance: 100,
+      balance: 50,
       currency: 'MXN',
       createdAt: now,
     });
