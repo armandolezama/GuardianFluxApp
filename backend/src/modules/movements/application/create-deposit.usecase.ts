@@ -5,6 +5,7 @@ import { MovementType } from '../domain/movement-type.enum';
 import {
   DestinationAccountNotFoundError,
   InsufficientFundsError,
+  UnauthorizedAccountAccessError,
 } from '../domain/errors';
 
 export interface IdGenerator {
@@ -16,6 +17,7 @@ interface CreateDepositInput {
   destinationAccountNumber: string;
   amount: number;
   description?: string;
+  requestedByUserId: string;
 }
 
 interface CreateDepositOutput {
@@ -38,14 +40,21 @@ export class CreateDepositUseCase {
   ) {}
 
   async execute(input: CreateDepositInput): Promise<CreateDepositOutput> {
-    const { originAccountNumber, destinationAccountNumber, amount, description } =
+    const { originAccountNumber, destinationAccountNumber, amount, description, requestedByUserId } =
       input;
 
     const origin = await this.accountRepository.findByAccountNumber(originAccountNumber);
-    const dest = await this.accountRepository.findByAccountNumber(destinationAccountNumber);    
+    const dest = await this.accountRepository.findByAccountNumber(destinationAccountNumber);
 
+
+    //TODO: Especificar más el error
     if (!origin || !dest) {
       throw new DestinationAccountNotFoundError();
+    }
+
+    if (origin.userId !== requestedByUserId) {
+      console.log('deposit error launched')
+      throw new UnauthorizedAccountAccessError();
     }
 
     if (!origin.canDebit(amount)) {

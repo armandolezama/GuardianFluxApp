@@ -92,7 +92,7 @@ export class RegisterWithInvitationUseCase {
       id: accountId,
       userId: user.id,
       accountNumber,
-      balance: 0, //TODO: delete this hardcoded initialization
+      balance: 10000,
       currency: 'MXN',
       createdAt: now,
     });

@@ -2,7 +2,7 @@ import { AccountRepository } from '../../accounts/domain/account.repository';
 import { MovementRepository } from '../domain/movement.repository';
 import { Movement } from '../domain/movement.entity';
 import { MovementType } from '../domain/movement-type.enum';
-import { InsufficientFundsError, AccountNotFoundError } from '../domain/errors';
+import { InsufficientFundsError, AccountNotFoundError, UnauthorizedAccountAccessError } from '../domain/errors';
 
 export interface IdGenerator {
   nextId(): string;
@@ -12,7 +12,9 @@ interface CreateWithdrawalInput {
   accountId: string;
   amount: number;
   description?: string;
+  requestedByUserId: string;
 }
+
 
 interface CreateWithdrawalOutput {
   account: {
@@ -31,11 +33,15 @@ export class CreateWithdrawalUseCase {
   ) {}
 
   async execute(input: CreateWithdrawalInput): Promise<CreateWithdrawalOutput> {
-    const { accountId, amount, description } = input;
+    const { accountId, amount, description, requestedByUserId } = input;
 
     const account = await this.accountRepository.findById(accountId);
     if (!account) {
       throw new AccountNotFoundError();
+    }
+
+    if (account.userId !== requestedByUserId) {
+      throw new UnauthorizedAccountAccessError();
     }
 
     if (!account.canDebit(amount)) {

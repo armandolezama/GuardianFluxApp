@@ -4,6 +4,7 @@ import {
   Post,
   BadRequestException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateDepositUseCase } from '../application/create-deposit.usecase';
@@ -12,7 +13,9 @@ import {
   DestinationAccountNotFoundError,
   InsufficientFundsError,
   AccountNotFoundError,
+  UnauthorizedAccountAccessError
 } from '../domain/errors';
+import { Request as ExpressRequest } from 'express';
 // import { Roles } from '../../auth/infrastructure/roles.decorator';
 // import { RolesGuard } from '../../auth/infrastructure/roles.guard';
 
@@ -29,6 +32,14 @@ export class CreateWithdrawalDto {
   description?: string;
 }
 
+interface AuthRequest extends ExpressRequest {
+  user: {
+    userId: string;
+    email: string;
+    roles: string[];
+  };
+}
+
 @UseGuards(AuthGuard('jwt')) // Todos los endpoints requieren token
 @Controller('movements')
 export class MovementsController {
@@ -38,7 +49,10 @@ export class MovementsController {
   ) {}
 
   @Post('deposit')
-  async deposit(@Body() body: CreateDepositDto) {
+  async deposit(
+    @Body() body: CreateDepositDto,
+    @Req() req: AuthRequest,
+  ) {
     const { originAccountNumber, destinationAccountNumber, amount, description } =
       body;
 
@@ -46,12 +60,15 @@ export class MovementsController {
       throw new BadRequestException('Amount must be greater than zero');
     }
 
+    const user = req.user as { userId: string; roles: string[] };
+
     try {
       const result = await this.createDepositUseCase.execute({
         originAccountNumber,
         destinationAccountNumber,
         amount,
         description,
+        requestedByUserId: user.userId,
       });
 
       return {
@@ -65,23 +82,32 @@ export class MovementsController {
       if (err instanceof InsufficientFundsError) {
         throw new BadRequestException('Insufficient funds');
       }
+      if (err instanceof UnauthorizedAccountAccessError) {
+        throw new BadRequestException('You are not allowed to use this account');
+      }
       throw err;
     }
   }
 
   @Post('withdraw')
-  async withdraw(@Body() body: CreateWithdrawalDto) {
+  async withdraw(
+    @Body() body: CreateWithdrawalDto,
+    @Req() req: AuthRequest,
+  ) {
     const { accountId, amount, description } = body;
 
     if (amount <= 0) {
       throw new BadRequestException('Amount must be greater than zero');
     }
 
+    const user = req.user as { userId: string; roles: string[] };
+
     try {
       const result = await this.createWithdrawalUseCase.execute({
         accountId,
         amount,
         description,
+        requestedByUserId: user.userId,
       });
 
       return {
@@ -93,6 +119,9 @@ export class MovementsController {
       }
       if (err instanceof InsufficientFundsError) {
         throw new BadRequestException('Insufficient funds');
+      }
+      if (err instanceof UnauthorizedAccountAccessError) {
+        throw new BadRequestException('You are not allowed to use this account');
       }
       throw err;
     }
