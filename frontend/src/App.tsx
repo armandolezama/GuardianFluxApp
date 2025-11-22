@@ -1,7 +1,6 @@
-import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 
-import AppLayout from './componentes/layout/AppLayout';
+import AppLayout from './componentes/layout/AppLayout.tsx';
 
 import { HomePage } from './pages/HomePage';
 import { ActivateInvitationPage } from './pages/ActivateInvitationPage';
@@ -11,7 +10,6 @@ import { MonitorPage } from './pages/MonitorPage';
 
 function App() {
   return (
-    <Box sx={{ minHeight: '100vh' }}>
       <AppLayout>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -21,7 +19,6 @@ function App() {
           <Route path="/monitor" element={<MonitorPage />} />
         </Routes>
       </AppLayout>
-    </Box>
   );
 }
 

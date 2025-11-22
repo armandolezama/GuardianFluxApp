@@ -1,4 +1,5 @@
-import { AppBar, Toolbar, Box, Typography, Button, Paper, Container } from '@mui/material'
+import { AppBar, Toolbar, Box, Typography, Avatar, Button, Paper, Container } from '@mui/material'
+import { deepOrange } from '@mui/material/colors';
 import type React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -9,26 +10,35 @@ type AppLayoutProps = {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
     return (
-        <Box>
-            <AppBar position='static'>
+        <Box sx={{ borderRadius: 2, bgcolor: 'white' }}>
+            <AppBar position='static' sx={{ bgcolor: 'white', color: 'black' }} >
                 <Toolbar>
-                    <Box>
-                        <Typography variant="subtitle2" color='secondary'>GF</Typography>
+                    <Box sx={{ mr: 1 }}>
+                        <Avatar sx={{ bgcolor: deepOrange[500] }}>GF</Avatar>
                     </Box>
 
-                    <Typography component={RouterLink} to="/">GuardianFlux</Typography>
+                    <Typography component={RouterLink} to="/" color='black' sx={{ textDecoration: 'none', color: 'inherit', ml: 1 }}>
+                        GuardianFlux
+                    </Typography>
 
-                    <Button component={RouterLink} to="/dashboard" variant='contained' color='success'>Dashboard</Button>
-                    <Button component={RouterLink} to="/monitor" variant='outlined' color='error'>Monitor</Button>
-                    <Button variant='outlined'>Iniciar sesión</Button>
+                    {/* spacer que empuja el bloque de botones a la derecha */}
+                    <Box sx={{ flexGrow: 1 }} />
+
+                    {/* agrupar botones y añadir espacio entre ellos */}
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button component={RouterLink} to="/dashboard" color='inherit'>Dashboard</Button>
+                        <Button component={RouterLink} to="/monitor" color='inherit'>Monitor</Button>
+                        <Button variant='outlined' color='inherit'>Iniciar sesión</Button>
+                    </Box>
                 </Toolbar>
             </AppBar>
 
-            <Container maxWidth="md">
+            <Container sx={{ boxShadow: 5 }}>
                 <Paper>
                     {children}
                 </Paper>
             </Container>
+
         </Box>
     );
 };
