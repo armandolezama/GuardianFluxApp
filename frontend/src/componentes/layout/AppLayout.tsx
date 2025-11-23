@@ -75,7 +75,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     {/* spacer que empuja el bloque de botones a la derecha */}
                     <Box
                         sx={{
-                            flexGrow: 1
+                            flexGrow: 1,
                         }} />
 
                     {/* agrupar botones y añadir espacio entre ellos */}
@@ -83,7 +83,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                         sx={{
                             display: "flex",
                             alignItems: 'center',
-                            gap: 0.5
+                            justifyContent: 'center',
+                            gap: 0.5,
                         }}>
 
                         <Button
@@ -133,18 +134,26 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             </AppBar>
 
             <Container
-                sx={{
-                    display: "flex",
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100%'
+                maxWidth="md" 
+                sx={{ 
+                    display: 'flex', 
+                    flexGrow: 1, 
+                    alignItems: 'center', 
+                    justiftyContent: 'center',
+                    py: 4 
                 }}>
-                <Paper>
+                <Paper          
+                elevation={2}
+                sx={{
+                p: 3,
+                borderRadius: 3,
+                borderTop: (theme) => `4px solid ${theme.palette.secondary.main}`,
+                }}>
                     {children}
                 </Paper>
             </Container>
 
-        </Box>
+        </Box >
     );
 };
 
