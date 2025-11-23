@@ -1,14 +1,23 @@
 import { Routes } from '@angular/router';
-import { AdminShell } from './admin-shell/admin-shell';
-import { Invitations } from './invitations/invitations';
+
+import { ADMIN_INVITATIONS_PROVIDERS } from '../features/admin-invitations/admin-invitations.providers';
+import { RoleGuard } from '../core/auth/guards/role.guard';
 
 export const ADMIN_ROUTES: Routes = [
   {
     path: '',
-    component: AdminShell,
+    // tu AdminShell ya envuelve layout
     children: [
-      { path: 'invitations', component: Invitations },
-//      { path: '', redirectTo: 'invitations', pathMatch: 'full' },
+      {
+        path: 'invitations',
+        canActivate: [RoleGuard],
+        providers: ADMIN_INVITATIONS_PROVIDERS,
+        loadComponent: () =>
+          import('../features/admin-invitations/ui/invitations.page')
+            .then(m => m.InvitationsPage),
+      },
+      { path: '', redirectTo: 'invitations', pathMatch: 'full' },
     ],
   },
 ];
+
