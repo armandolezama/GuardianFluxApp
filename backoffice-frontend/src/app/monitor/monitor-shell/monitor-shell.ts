@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { BackofficeShell } from '../../core/layout/backoffice-shell/backoffice-shell';
 
 @Component({
   selector: 'app-monitor-shell',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './monitor-shell.html',
+  imports: [BackofficeShell],
+  template: `<app-backoffice-shell role="MONITOR" />`,
 })
 export class MonitorShell {}

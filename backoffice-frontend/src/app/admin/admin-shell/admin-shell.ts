@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { BackofficeShell } from '../../core/layout/backoffice-shell/backoffice-shell';
 
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './admin-shell.html',
+  imports: [BackofficeShell],
+  template: `<app-backoffice-shell role="ADMIN" />`,
 })
 export class AdminShell {}

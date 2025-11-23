@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+
+/**
+ * GuardianFlux Backoffice themes (Material 3)
+ * Basado en Rose/Red que escogiste. Puedes cambiar paletas luego.
+ */
+
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$rose-palette,
+    tertiary: mat.$red-palette,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$rose-palette,
+    tertiary: mat.$red-palette,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));

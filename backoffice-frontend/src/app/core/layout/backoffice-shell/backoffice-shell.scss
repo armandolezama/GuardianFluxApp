@@ -1,0 +1,21 @@
+.container { height: 100vh; }
+.sidenav { width: 220px; }
+.content { height: 100%; }
+.toolbar { position: sticky; top: 0; z-index: 10; }
+.main { padding: 16px; }
+
+.brand {
+  font-weight: 700;
+  font-size: 18px;
+  padding: 16px;
+}
+.subtitle {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.spacer { flex: 1 1 auto; }
+
+a.active {
+  font-weight: 600;
+}
