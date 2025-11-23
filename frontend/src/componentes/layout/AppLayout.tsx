@@ -21,13 +21,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             }}>
             <AppBar
                 sx={{
+                    width: '100%',
+                    height: '70px',
                     display: 'flex',
                     bgcolor: 'white',
                     color: 'black',
-                    boxShadow: 'none',
+                    boxShadow: '2',
                     justifyContent: 'center',
-                    height: '40px',
-                    border: '1px solid'
                     
                 }}>
                 <Toolbar
@@ -137,21 +137,27 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             </AppBar>
 
             <Container
-                maxWidth="md" 
-                sx={{ 
-                    display: 'flex', 
-                    flexGrow: 1, 
-                    alignItems: 'center', 
-                    justiftyContent: 'center',
-                    py: 4 
-                }}>
-                <Paper          
-                elevation={2}
                 sx={{
-                p: 3,
-                borderRadius: 3,
-                borderTop: (theme) => `4px solid ${theme.palette.secondary.main}`,
+                    display: 'flex',
+                    justifyContent: 'center', // Centra horizontalmente
+                    alignItems: 'flex-start', // Alinea arriba
+                    minHeight: '100vh',
+                    marginTop: '90px', // Espacio para el header (ajustable)
                 }}>
+                <Paper
+                    elevation={2}
+                    sx={{
+                        width: { xs: '100%', sm: '90%', md: '75%' },
+                        maxWidth: 800,
+                        minHeight: 100,
+                        p: 3,
+                        borderRadius: 3,
+                        borderTop: (theme) => `4px solid ${theme.palette.secondary.main}`,
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
                     {children}
                 </Paper>
             </Container>
