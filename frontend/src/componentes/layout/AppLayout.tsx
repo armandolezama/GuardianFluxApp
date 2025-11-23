@@ -24,9 +24,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     display: 'flex',
                     bgcolor: 'white',
                     color: 'black',
-                    boxShadow: 5,
+                    boxShadow: 'none',
                     justifyContent: 'center',
-                    height: '40px'
+                    height: '40px',
+                    border: '1px solid'
+                    
                 }}>
                 <Toolbar
                     sx={{
