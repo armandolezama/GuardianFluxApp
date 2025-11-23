@@ -1,5 +1,4 @@
 import { AppBar, Toolbar, Box, Typography, Avatar, Button, Paper, Container } from '@mui/material'
-import { deepOrange } from '@mui/material/colors';
 import type React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -13,11 +12,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <Box
             sx={{
                 display: "flex",
-                flexFlow: "column",
+                flexDirection: "column",
                 width: "100%",
-                height: "100vh",
+                minHeight: "100vh",
                 border: "1px solid",
-                bgcolor: 'white'
+                bgcolor: 'white',
             }}>
             <AppBar
                 sx={{
@@ -139,10 +138,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             <Container
                 sx={{
                     display: 'flex',
-                    justifyContent: 'center', // Centra horizontalmente
-                    alignItems: 'flex-start', // Alinea arriba
-                    minHeight: '100vh',
-                    marginTop: '90px', // Espacio para el header (ajustable)
+                    justifyContent: 'center',
+                    alignItems: 'flex-start',
+                    flex: 1,
+                    height: 0,
+                    minHeight: 0,
+                    marginTop: '90px',
+                    overflow: 'auto',
+                    pb: 4, // Padding inferior para que no toque el fondo
                 }}>
                 <Paper
                     elevation={2}
