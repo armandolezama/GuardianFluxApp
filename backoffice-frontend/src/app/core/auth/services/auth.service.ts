@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
@@ -12,10 +12,34 @@ type LoginResponse = {
   };
 };
 
+export type BackofficeRole = 'ADMIN' | 'MONITOR';
+
+export type BackofficeUser = {
+  id: string;
+  name: string;
+  email: string;
+  roles: BackofficeRole[];
+};
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = 'http://localhost:3000'; // después lo movemos a environment
+
+  // ✅ estado mínimo centralizado
+  private _currentUser = signal<BackofficeUser | null>(null);
+
+  currentUser = computed(() => this._currentUser());
+  role = computed<BackofficeRole | null>(() => this._currentUser()?.roles?.[0] ?? null);
+  isLoggedIn = computed(() => !!this._currentUser());
+
+  constructor() {
+    // ✅ intenta hidratar desde token al cargar app
+    const payload = this.getPayload();
+    if (payload?.user) {
+      this._currentUser.set(payload.user);
+    }
+  }
 
   async login(email: string, password: string) {
     const res = await firstValueFrom(
@@ -27,25 +51,36 @@ export class AuthService {
 
     localStorage.setItem('token', res.accessToken);
 
+    const user: BackofficeUser = {
+      ...res.user,
+      roles: (res.user.roles ?? []).filter(r => r === 'ADMIN' || r === 'MONITOR') as BackofficeRole[],
+    };
+
+    // ✅ set de estado
+    this._currentUser.set(user);
+
     return {
       token: res.accessToken,
-      user: res.user,
-      roles: res.user.roles,
+      user,
+      roles: user.roles,
     };
   }
 
   logout() {
     localStorage.removeItem('token');
+    this._currentUser.set(null);
   }
 
   getToken() {
     return localStorage.getItem('token');
   }
 
-  getRoles(): string[] {
+  getRoles(): BackofficeRole[] {
     const payload = this.getPayload();
-    const roles = payload?.roles;
-    return Array.isArray(roles) ? roles : [];
+    const roles = payload?.roles ?? payload?.user?.roles;
+    return Array.isArray(roles)
+      ? roles.filter((r: any) => r === 'ADMIN' || r === 'MONITOR')
+      : [];
   }
 
   getPayload(): any | null {
