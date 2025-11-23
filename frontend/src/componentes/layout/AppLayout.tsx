@@ -46,7 +46,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
                         <Avatar
                             sx={{
-                                bgcolor: deepOrange[500],
+                                bgcolor: '#b31717ff',
                                 width: 22,
                                 height: 22,
                                 fontSize: 11
@@ -63,9 +63,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                         sx={{
                             display: "flex",
                             alignItems: 'center',
-                            fontWeight: 500,
-                            fontSize: 14,
+                            fontWeight: 700,
+                            fontSize: 15,
                             letterSpacing: 0.5,
+                            textDecoration: 'none',
                             ml: 1,
                             mr: 2,
                         }}>
@@ -118,14 +119,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                         </Button>
                         <Button
                             variant='outlined'
-                            color='inherit'
+                            color='primary'
                             size="small"
                             sx={{
                                 minWidth: 0,
                                 px: 1,
                                 fontSize: 11,
                                 borderRadius: 1,
-                                height: 24
+                                height: 24,
                             }}>
                             Iniciar sesión
                         </Button>
