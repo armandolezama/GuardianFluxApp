@@ -1,22 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoleGuard implements CanActivate {
-  constructor(private router: Router) {}
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
   canActivate(): boolean {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-
-    // decodifica payload simple (sin validar firma)
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const roles: string[] = payload.roles ?? [];
-
+    const roles = this.auth.getRoles();
     const isBackoffice = roles.includes('ADMIN') || roles.includes('MONITOR');
+
     if (!isBackoffice) {
       this.router.navigate(['/login']);
       return false;

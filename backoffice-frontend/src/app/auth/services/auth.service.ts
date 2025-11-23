@@ -4,24 +4,34 @@ import { firstValueFrom } from 'rxjs';
 
 type LoginResponse = {
   accessToken: string;
-  user: { id: string; email: string; roles: string[] };
-  account?: any;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    roles: string[];
+  };
 };
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000'; // luego lo pasas a env
+  private baseUrl = 'http://localhost:3000';
 
   async login(email: string, password: string) {
     const res = await firstValueFrom(
       this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, {
-        email, password
-      })
+        email,
+        password,
+      }),
     );
 
     localStorage.setItem('token', res.accessToken);
-    return { token: res.accessToken, roles: res.user.roles };
+
+    return {
+      token: res.accessToken,
+      user: res.user,
+      roles: res.user.roles,
+    };
   }
 
   logout() {

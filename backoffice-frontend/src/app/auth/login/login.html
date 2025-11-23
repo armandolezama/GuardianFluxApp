@@ -6,9 +6,6 @@
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Email</mat-label>
         <input matInput formControlName="email" type="email" />
-        <mat-error *ngIf="form.controls.email.invalid">
-          Invalid email
-        </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="w-100">
@@ -16,7 +13,12 @@
         <input matInput formControlName="password" type="password" />
       </mat-form-field>
 
-      <button mat-raised-button color="primary" class="w-100" [disabled]="loading">
+      <button
+        mat-raised-button
+        color="primary"
+        class="w-100"
+        [disabled]="loading"
+      >
         {{ loading ? 'Signing in...' : 'Login' }}
       </button>
 

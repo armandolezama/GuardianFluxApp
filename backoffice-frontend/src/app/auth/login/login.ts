@@ -38,6 +38,7 @@ export class LoginComponent {
 
   async submit() {
     if (this.form.invalid) return;
+
     this.loading = true;
     this.error = null;
 
@@ -45,12 +46,26 @@ export class LoginComponent {
 
     try {
       const result = await this.auth.login(email!, password!);
-      // redirect por rol
-      if (result.roles.includes('ADMIN')) this.router.navigate(['/admin']);
-      else if (result.roles.includes('MONITOR')) this.router.navigate(['/monitor']);
-      else this.router.navigate(['/login']); // por si entra alguien no-backoffice
+
+      if (result.roles.includes('ADMIN')) {
+        this.router.navigate(['/admin']);
+        return;
+      }
+
+      if (result.roles.includes('MONITOR')) {
+        this.router.navigate(['/monitor']);
+        return;
+      }
+
+      // Si es customer, NO puede entrar a backoffice
+      this.auth.logout();
+      this.error = 'This portal is only for ADMIN or MONITOR.';
+      this.router.navigate(['/login']);
     } catch (e: any) {
-      this.error = e?.message ?? 'Login failed';
+      this.error =
+        e?.error?.message ??
+        e?.message ??
+        'Login failed. Check credentials.';
     } finally {
       this.loading = false;
     }
