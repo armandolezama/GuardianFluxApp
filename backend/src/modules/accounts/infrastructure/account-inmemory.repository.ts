@@ -19,4 +19,8 @@ export class InMemoryAccountRepository implements AccountRepository {
   async findById(id: string): Promise<Account | null> {
     return this.accounts.find(a => a.id === id) ?? null;
   }
+
+  async findByUserId(userId: string): Promise<Account[]> {
+    return this.accounts.filter(a => a.userId === userId);
+  }
 }
