@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnChanges } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
@@ -8,6 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { ThemeService } from '../../theme/theme.service';
+
 
 export type BackofficeRole = 'ADMIN' | 'MONITOR';
 
@@ -23,25 +25,32 @@ export type BackofficeRole = 'ADMIN' | 'MONITOR';
   templateUrl: './backoffice-shell.html',
   styleUrl: './backoffice-shell.scss',
 })
-export class BackofficeShell {
+export class BackofficeShell implements OnChanges{
   private auth = inject(AuthService);
+  private themeSvc = inject(ThemeService);
 
   @Input({ required: true }) role!: BackofficeRole;
+
+  menu: Array<{label: string; path: string}> = [];
+
+  ngOnChanges() {
+    this.menu = this.role === 'ADMIN'
+      ? [{ label: 'Invitations', path: '/admin/invitations' }]
+      : [{ label: 'Movements', path: '/monitor/movements' }];
+  }
+
+  trackByPath = (_: number, item: {path: string}) => item.path;
 
   logout() {
     this.auth.logout();
     location.href = '/login';
   }
 
-  // Menú por rol (mínimo para Fase 0)
-  get menu() {
-    if (this.role === 'ADMIN') {
-      return [
-        { label: 'Invitations', path: '/admin/invitations' },
-      ];
-    }
-    return [
-      { label: 'Movements', path: '/monitor/movements' },
-    ];
+  toggleTheme() {
+    this.themeSvc.toggle();
+  }
+
+  get themeMode() {
+    return this.themeSvc.mode();
   }
 }

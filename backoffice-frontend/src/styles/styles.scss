@@ -9,17 +9,16 @@ html, body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* Light theme activado cuando html tiene .theme-light */
+/* gate de tema por clase en html */
 html.theme-light {
   @include mat.all-component-themes(themes.$light-theme);
 }
 
-/* Dark theme activado cuando html tiene .theme-dark */
 html.theme-dark {
   @include mat.all-component-themes(themes.$dark-theme);
 }
 
-/* Opcional: fondo/ texto global coherente con tokens del tema */
+/* fondo general coherente con tokens M3 */
 html.theme-light body {
   background: #{mat.get-theme-color(themes.$light-theme, neutral, 98)};
   color: var(--mat-sys-on-surface);

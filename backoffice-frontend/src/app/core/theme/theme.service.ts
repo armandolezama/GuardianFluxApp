@@ -1,10 +1,12 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject, NgZone } from '@angular/core';
 
 export type ThemeMode = 'light' | 'dark';
 const STORAGE_KEY = 'gf-backoffice-theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
+  private zone = inject(NgZone);
+
   mode = signal<ThemeMode>(this.getInitialMode());
 
   constructor() {
@@ -23,11 +25,12 @@ export class ThemeService {
   }
 
   private apply(mode: ThemeMode) {
-    const html = document.documentElement;
-    html.classList.remove('theme-light', 'theme-dark');
-    html.classList.add(`theme-${mode}`);
-    // para controls nativos (scrollbars, inputs del browser)
-    html.style.colorScheme = mode;
+    this.zone.runOutsideAngular(() => {
+      const html = document.documentElement;
+      html.classList.remove('theme-light', 'theme-dark');
+      html.classList.add(`theme-${mode}`);
+      html.style.colorScheme = mode;
+    });
   }
 
   private getInitialMode(): ThemeMode {

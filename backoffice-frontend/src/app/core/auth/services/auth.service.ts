@@ -43,13 +43,37 @@ export class AuthService {
   }
 
   getRoles(): string[] {
+    const payload = this.getPayload();
+    const roles = payload?.roles;
+    return Array.isArray(roles) ? roles : [];
+  }
+
+  getPayload(): any | null {
     const token = this.getToken();
-    if (!token) return [];
+    if (!token) return null;
+
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.roles ?? [];
+      const payloadPart = token.split('.')[1];
+      if (!payloadPart) throw new Error('Malformed token');
+      return JSON.parse(atob(payloadPart));
     } catch {
-      return [];
+      this.logout();
+      return null;
     }
+  }
+
+  isTokenValid(): boolean {
+    const payload = this.getPayload();
+    if (!payload) return false;
+
+    const exp = payload.exp;
+    if (typeof exp !== 'number') return false;
+
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (exp <= nowSec) {
+      this.logout();
+      return false;
+    }
+    return true;
   }
 }

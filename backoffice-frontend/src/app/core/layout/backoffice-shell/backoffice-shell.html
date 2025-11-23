@@ -6,12 +6,8 @@
     </div>
 
     <mat-nav-list>
-      <a
-        mat-list-item
-        *ngFor="let item of menu"
-        [routerLink]="item.path"
-        routerLinkActive="active"
-      >
+      <a mat-list-item *ngFor="let item of menu; trackBy: trackByPath" [routerLink]="item.path"
+        routerLinkActive="active">
         {{ item.label }}
       </a>
     </mat-nav-list>
@@ -22,9 +18,10 @@
       <span>{{ role }}</span>
       <span class="spacer"></span>
 
-      <!-- Theme toggle vendrá en Fase 1 -->
-      <button mat-icon-button disabled>
-        <mat-icon>dark_mode</mat-icon>
+      <button mat-icon-button (click)="toggleTheme()" aria-label="Toggle theme">
+        <mat-icon>
+          {{ themeMode === 'dark' ? 'light_mode' : 'dark_mode' }}
+        </mat-icon>
       </button>
 
       <button mat-button (click)="logout()">Logout</button>

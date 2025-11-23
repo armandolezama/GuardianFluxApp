@@ -8,7 +8,7 @@ export const ADMIN_ROUTES: Routes = [
     component: AdminShell,
     children: [
       { path: 'invitations', component: Invitations },
-      { path: '', redirectTo: 'invitations', pathMatch: 'full' },
+//      { path: '', redirectTo: 'invitations', pathMatch: 'full' },
     ],
   },
 ];

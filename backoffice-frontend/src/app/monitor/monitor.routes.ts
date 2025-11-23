@@ -8,7 +8,7 @@ export const MONITOR_ROUTES: Routes = [
     component: MonitorShell,
     children: [
       { path: 'movements', component: Movements },
-      { path: '', redirectTo: 'movements', pathMatch: 'full' },
+//      { path: '', redirectTo: 'movements', pathMatch: 'full' },
     ],
   },
 ];

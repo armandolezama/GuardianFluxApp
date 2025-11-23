@@ -4,7 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-movements',
   imports: [],
   templateUrl: './movements.html',
-  styleUrl: './movements.scss',
 })
 export class Movements {
 
