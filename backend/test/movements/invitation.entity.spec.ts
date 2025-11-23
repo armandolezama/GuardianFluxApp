@@ -1,12 +1,13 @@
 import { Invitation } from '../../src/modules/invitations/domain/invitation.entity';
 import { InvitationStatus } from '../../src/modules/invitations/domain/invitation-status.enum';
+import { Role } from '../../src/modules/users/domain/role.enum';
 
 describe('Invitation entity', () => {
   const baseProps = {
     id: 'inv-1',
     code: 'INV-TEST',
     email: 'test@example.com',
-    role: 'CUSTOMER',
+    role: Role.CUSTOMER,
     createdByUserId: 'admin-1',
     createdAt: new Date('2024-12-31T00:00:00Z'),
   };

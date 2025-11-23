@@ -15,6 +15,7 @@ import { AccountRepository } from '../../src/modules/accounts/domain/account.rep
 import { RegisterWithInvitationUseCase } from '../../src/modules/auth/application/register-with-invitation.usecase';
 import { ValidateInvitationUseCase } from '../../src/modules/invitations/application/validate-invitation.usecase';
 import { PasswordHasher } from '../../src/modules/auth/domain/password-hasher';
+import { Role } from '../../src/modules/users/domain/role.enum';
 
 // Repos in-memory para TDD
 
@@ -140,7 +141,7 @@ describe('RegisterWithInvitationUseCase', () => {
       id: 'inv-1',
       code: 'INV-OK',
       email: 'armando@example.com',
-      role: 'CUSTOMER',
+      role: Role.CUSTOMER,
       status: InvitationStatus.PENDING,
       expiresAt,
       usedAt: null,
@@ -158,7 +159,7 @@ describe('RegisterWithInvitationUseCase', () => {
     });
 
     expect(result.user.email).toBe('armando@example.com');
-    expect(result.user.roles).toContain('CUSTOMER');
+    expect(result.user.roles).toContain(Role.CUSTOMER);
     expect(result.account.balance).toBe(0);
     expect(result.account.currency).toBe('MXN');
 
@@ -180,7 +181,7 @@ describe('RegisterWithInvitationUseCase', () => {
       id: 'inv-2',
       code: 'INV-EXP',
       email: 'laura@example.com',
-      role: 'CUSTOMER',
+      role: Role.CUSTOMER,
       status: InvitationStatus.PENDING,
       expiresAt,
       usedAt: null,
@@ -207,7 +208,7 @@ describe('RegisterWithInvitationUseCase', () => {
       id: 'inv-3',
       code: 'INV-USED',
       email: 'used@example.com',
-      role: 'CUSTOMER',
+      role: Role.CUSTOMER,
       status: InvitationStatus.USED,
       expiresAt,
       usedAt: new Date('2024-12-31T23:59:59Z'),
@@ -234,7 +235,7 @@ describe('RegisterWithInvitationUseCase', () => {
       name: 'Someone',
       email: 'exists@example.com',
       passwordHash: 'hashed-pass',
-      roles: ['CUSTOMER'],
+      roles: [Role.CUSTOMER],
       createdAt: new Date('2024-12-01T00:00:00Z'),
     });
     await userRepo.save(existingUser);
@@ -245,7 +246,7 @@ describe('RegisterWithInvitationUseCase', () => {
       id: 'inv-4',
       code: 'INV-EMAIL',
       email: 'exists@example.com',
-      role: 'CUSTOMER',
+      role: Role.CUSTOMER,
       status: InvitationStatus.PENDING,
       expiresAt,
       usedAt: null,

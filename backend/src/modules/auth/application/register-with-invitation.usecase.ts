@@ -9,6 +9,7 @@ import { EmailAlreadyInUseError } from '../../users/domain/errors';
 import { User } from '../../users/domain/user.entity';
 import { Account } from '../../accounts/domain/account.entity';
 import { PasswordHasher } from '../domain/password-hasher';
+import { Role } from '../../users/domain/role.enum';
 
 interface RegisterWithInvitationInput {
   code: string;
@@ -78,7 +79,7 @@ export class RegisterWithInvitationUseCase {
       name,
       email,
       passwordHash,
-      roles: [validated.role], // 'CUSTOMER' por ahora
+      roles: [validated.role as Role],
       createdAt: now,
     });
 
@@ -114,7 +115,7 @@ export class RegisterWithInvitationUseCase {
         id: user.id,
         name: user.name,
         email: user.email,
-        roles: user.roles,
+        roles: user.roles as Role[],
       },
       account: {
         id: account.id,

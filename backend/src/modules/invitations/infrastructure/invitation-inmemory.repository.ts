@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InvitationRepository } from '../domain/invitation.repository';
 import { Invitation } from '../domain/invitation.entity';
 import { InvitationStatus } from '../domain/invitation-status.enum';
+import { Role } from '../../users/domain/role.enum';
 
 @Injectable()
 export class InMemoryInvitationRepository implements InvitationRepository {
@@ -15,7 +16,7 @@ export class InMemoryInvitationRepository implements InvitationRepository {
     id: 'inv-1',
     code: 'INV-USER1',
     email: 'user1@example.com',
-    role: 'CUSTOMER',
+    role: Role.ADMIN,
     status: InvitationStatus.PENDING,
     expiresAt: future,
     usedAt: null,
@@ -27,7 +28,7 @@ export class InMemoryInvitationRepository implements InvitationRepository {
     id: 'inv-2',
     code: 'INV-USER2',
     email: 'user2@example.com',
-    role: 'CUSTOMER',
+    role: Role.CUSTOMER,
     status: InvitationStatus.PENDING,
     expiresAt: future,
     usedAt: null,

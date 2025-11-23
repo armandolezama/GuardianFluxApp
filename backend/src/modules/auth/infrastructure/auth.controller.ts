@@ -15,6 +15,7 @@ import {
   LoginWithEmailAndPasswordUseCase,
   InvalidCredentialsError,
 } from '../application/login-with-email-and-password.usecase';
+import { Role } from '../../users/domain/role.enum';
 
 class RegisterWithInvitationDto {
   code!: string;
@@ -52,7 +53,7 @@ export class AuthController {
       const payload = {
         sub: result.user.id,
         email: result.user.email,
-        roles: result.user.roles,
+        roles: result.user.roles as Role[],
       };
 
       const accessToken = this.jwtService.sign(payload);
@@ -88,7 +89,7 @@ export class AuthController {
       const payload = {
         sub: result.user.id,
         email: result.user.email,
-        roles: result.user.roles,
+        roles: result.user.roles as Role[],
       };
 
       const accessToken = this.jwtService.sign(payload);

@@ -7,6 +7,7 @@ import {
   InvitationExpiredError,
   InvitationNotFoundError,
 } from '../domain/errors';
+import { Role } from '../../users/domain/role.enum';
 
 interface ValidateInvitationInput {
   code: string;
@@ -49,7 +50,7 @@ export class ValidateInvitationUseCase {
     return {
       code: invitation.code,
       email: invitation.email,
-      role: invitation.role,
+      role: invitation.role as Role,
       status: invitation.status,
       expiresAt: invitation.expiresAt,
     };

@@ -1,12 +1,13 @@
 // backend/src/modules/invitations/domain/invitation.entity.ts
 
+import { Role } from '../../users/domain/role.enum';
 import { InvitationStatus } from './invitation-status.enum';
 
 export interface InvitationProps {
   id: string;
   code: string;
   email?: string;
-  role: string; // 'CUSTOMER' por ahora
+  role: Role;
   status: InvitationStatus;
   expiresAt: Date;
   usedAt?: Date | null;
@@ -34,7 +35,7 @@ export class Invitation {
   }
 
   get role() {
-    return this.props.role;
+    return this.props.role as Role;
   }
 
   get status() {

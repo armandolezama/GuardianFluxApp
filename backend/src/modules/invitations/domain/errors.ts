@@ -20,3 +20,10 @@ export class InvitationAlreadyUsedError extends Error {
     this.name = 'InvitationAlreadyUsedError';
   }
 }
+
+export class InvalidInvitationExpirationError extends Error {
+  constructor() {
+    super('Invitation expiration must be in the future');
+    this.name = 'InvalidInvitationExpirationError';
+  }
+}

@@ -1,11 +1,13 @@
 // backend/src/modules/users/domain/user.entity.ts
 
+import { Role } from "./role.enum";
+
 export interface UserProps {
   id: string;
   name: string;
   email: string;
   passwordHash: string;
-  roles: string[]; // ['CUSTOMER'], ['MONITOR'], etc.
+  roles: Role[];
   createdAt: Date;
 }
 

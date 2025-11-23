@@ -9,6 +9,7 @@ import {
   InvitationNotFoundError,
 } from '../../src/modules/invitations/domain/errors';
 import { ValidateInvitationUseCase } from '../../src/modules/invitations/application/validate-invitation.usecase';
+import { Role } from '../../src/modules/users/domain/role.enum';
 
 class InMemoryInvitationRepository implements InvitationRepository {
   private invitations = new Map<string, Invitation>(); // key: code
@@ -46,7 +47,7 @@ describe('ValidateInvitationUseCase', () => {
       id: 'inv-1',
       code: 'INV-123',
       email: 'user@example.com',
-      role: 'CUSTOMER',
+      role: Role .CUSTOMER,
       status: InvitationStatus.PENDING,
       expiresAt,
       usedAt: null,
@@ -60,7 +61,7 @@ describe('ValidateInvitationUseCase', () => {
 
     expect(result.code).toBe('INV-123');
     expect(result.email).toBe('user@example.com');
-    expect(result.role).toBe('CUSTOMER');
+    expect(result.role).toBe(Role.CUSTOMER);
     expect(result.status).toBe(InvitationStatus.PENDING);
     expect(result.expiresAt).toEqual(expiresAt);
   });
@@ -78,7 +79,7 @@ describe('ValidateInvitationUseCase', () => {
       id: 'inv-2',
       code: 'INV-EXP',
       email: 'exp@example.com',
-      role: 'CUSTOMER',
+      role: Role.CUSTOMER,
       status: InvitationStatus.PENDING,
       expiresAt,
       usedAt: null,
@@ -100,7 +101,7 @@ describe('ValidateInvitationUseCase', () => {
       id: 'inv-3',
       code: 'INV-USED',
       email: 'used@example.com',
-      role: 'CUSTOMER',
+      role: Role.CUSTOMER,
       status: InvitationStatus.USED,
       expiresAt,
       usedAt: new Date('2024-12-31T23:59:59Z'),

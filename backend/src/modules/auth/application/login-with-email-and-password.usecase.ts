@@ -1,3 +1,4 @@
+import { Role } from '../../users/domain/role.enum';
 import { UserRepository } from '../../users/domain/user.repository';
 import { PasswordHasher } from '../domain/password-hasher';
 
@@ -46,7 +47,7 @@ export class LoginWithEmailAndPasswordUseCase {
         id: user.id,
         email: user.email,
         name: user.name,
-        roles: user.roles,
+        roles: user.roles as Role[],
       },
     };
   }
