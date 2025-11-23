@@ -4,6 +4,43 @@ import { Invitation } from '../domain/invitation.entity';
 import { InvitationStatus } from '../domain/invitation-status.enum';
 import { Role } from '../../users/domain/role.enum';
 
+const initialInvitations = [
+  {
+    id: 'inv-1',
+    code: 'INV-USER1',
+    email: 'admin-1@example.com',
+    role: Role.ADMIN,
+    status: InvitationStatus.PENDING,
+    // expiresAt: () => {},// Insert future result,
+    usedAt: null,
+    createdByUserId: 'admin-1',
+    // createdAt: () => {},// Insert future result,,
+  },
+  {
+    id: 'inv-2',
+    code: 'INV-USER2',
+    email: 'costumer-1@example.com',
+    role: Role.CUSTOMER,
+    status: InvitationStatus.PENDING,
+    // expiresAt: future,
+    usedAt: null,
+    createdByUserId: 'admin-1',
+    // createdAt: now,
+  },
+    {
+    id: 'inv-3',
+    code: 'INV-USER3',
+    email: 'monitor-1@example.com',
+    role: Role.MONITOR,
+    status: InvitationStatus.PENDING,
+    // expiresAt: future,
+    usedAt: null,
+    createdByUserId: 'admin-1',
+    // createdAt: now,
+  },
+
+];
+
 @Injectable()
 export class InMemoryInvitationRepository implements InvitationRepository {
   private invitations = new Map<string, Invitation>();
@@ -12,32 +49,23 @@ export class InMemoryInvitationRepository implements InvitationRepository {
   const now = new Date();
   const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 días
 
-  const inv1 = new Invitation({
-    id: 'inv-1',
-    code: 'INV-USER1',
-    email: 'user1@example.com',
-    role: Role.ADMIN,
-    status: InvitationStatus.PENDING,
-    expiresAt: future,
-    usedAt: null,
-    createdByUserId: 'admin-1',
-    createdAt: now,
+  const invs = initialInvitations.map((inv) => {
+    return new Invitation({
+      id: inv.id,
+      code: inv.code,
+      email: inv.email,
+      role: inv.role,
+      status: inv.status,
+      expiresAt: future,
+      usedAt: inv.usedAt,
+      createdByUserId: inv.createdByUserId,
+      createdAt: now,
+    });
   });
 
-  const inv2 = new Invitation({
-    id: 'inv-2',
-    code: 'INV-USER2',
-    email: 'user2@example.com',
-    role: Role.CUSTOMER,
-    status: InvitationStatus.PENDING,
-    expiresAt: future,
-    usedAt: null,
-    createdByUserId: 'admin-1',
-    createdAt: now,
-  });
-
-  this.invitations.set(inv1.code, inv1);
-  this.invitations.set(inv2.code, inv2);
+  for(const inv of invs) {
+    this.invitations.set(inv.code, inv);
+  }
 }
 
 
