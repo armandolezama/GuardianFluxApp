@@ -18,22 +18,24 @@ interface RegisterWithInvitationInput {
   password: string;
 }
 
-interface RegisterWithInvitationOutput {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    roles: string[];
-  };
-  account: {
-    id: string;
-    userId: string;
-    accountNumber: string;
-    balance: number;
-    currency: string;
-  };
-}
+type UserData = {
+  id: string;
+  name: string;
+  email: string;
+  roles: Role[];
+};
 
+type AccountData = {
+  id: string;
+  userId: string;
+  accountNumber: string;
+  balance: number;
+  currency: string;
+};
+
+export type RegisterWithInvitationOutput =
+  | { user: UserData; account: AccountData }   // customers
+  | { user: UserData };                        // admin/monitor
 export interface IdGenerator {
   nextId(): string;
 }
@@ -52,7 +54,7 @@ export class RegisterWithInvitationUseCase {
     private readonly idGenerator: IdGenerator,
     private readonly accountNumberGenerator: AccountNumberGenerator,
     private readonly nowProvider: () => Date = () => new Date(),
-  ) {}
+  ) { }
 
   async execute(
     input: RegisterWithInvitationInput,
@@ -74,56 +76,74 @@ export class RegisterWithInvitationUseCase {
     const userId = this.idGenerator.nextId();
     const passwordHash = await this.passwordHasher.hash(password);
 
+    const role = validated.role as Role;
+
     const user = new User({
       id: userId,
       name,
       email,
       passwordHash,
-      roles: [validated.role as Role],
+      roles: [role],
       createdAt: now,
     });
 
     await this.userRepository.save(user);
 
-    // 4) Crear cuenta
-    const accountId = this.idGenerator.nextId();
-    const accountNumber = this.accountNumberGenerator.generate();
+    const shouldCreateAccount = (r: Role) =>
+      r === Role.CUSTOMER || r === Role.CUSTOMER_DEMO;
 
-    const account = new Account({
-      id: accountId,
-      userId: user.id,
-      accountNumber,
-      balance: 10000,
-      currency: 'MXN',
-      createdAt: now,
-    });
+    let account: Account | null = null;
 
-    await this.accountRepository.save(account);
+    if (shouldCreateAccount(role)) {
+      // 4) Crear cuenta SOLO para customers
+      const accountId = this.idGenerator.nextId();
+      const accountNumber = this.accountNumberGenerator.generate();
+
+      account = new Account({
+        id: accountId,
+        userId: user.id,
+        accountNumber,
+        balance: 10000,
+        currency: 'MXN',
+        createdAt: now,
+      });
+
+      await this.accountRepository.save(account);
+    }
 
     // 5) Marcar invitación como usada
     const invitation = await this.invitationRepository.findByCode(code);
     if (invitation) {
-      // mutate status; podrías mover esto a un método de dominio tipo invitation.markUsed(now)
       (invitation as any).props.status = InvitationStatus.USED;
       (invitation as any).props.usedAt = now;
       await this.invitationRepository.save(invitation);
     }
 
-    // 6) Devolver datos agregados
-    return {
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        roles: user.roles as Role[],
-      },
-      account: {
-        id: account.id,
-        userId: account.userId,
-        accountNumber: account.accountNumber,
-        balance: account.balance,
-        currency: account.currency,
-      },
+    // 6) Construir respuesta
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      roles: user.roles as Role[],
     };
+
+    const responseBase = { user: userData };
+
+    // Solo construimos accountData si existe cuenta
+if (account) {
+  return {
+    user: userData,
+    account: {
+      id: account.id,
+      userId: account.userId,
+      accountNumber: account.accountNumber,
+      balance: account.balance,
+      currency: account.currency,
+    },
+  };
+}
+
+return { user: userData };
+
   }
 }

@@ -35,7 +35,7 @@ export class AuthController {
     private readonly registerWithInvitationUseCase: RegisterWithInvitationUseCase,
     private readonly loginWithEmailAndPasswordUseCase: LoginWithEmailAndPasswordUseCase,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   @Post('register-with-invitation')
   async register(@Body() body: RegisterWithInvitationDto) {
@@ -61,7 +61,7 @@ export class AuthController {
       return {
         accessToken,
         user: result.user,
-        account: result.account,
+        ...('account' in result ? { account: result.account } : {}),
       };
     } catch (err) {
       if (
