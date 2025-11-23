@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-admin-shell',
   standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './app.html',
+  templateUrl: './admin-shell.html',
 })
-export class App {}
+export class AdminShell {}
