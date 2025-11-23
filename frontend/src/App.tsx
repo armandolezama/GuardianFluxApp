@@ -4,7 +4,7 @@ import AppLayout from './componentes/layout/AppLayout.tsx';
 
 import { HomePage } from './pages/HomePage';
 import  ActivateInvitationPage  from './pages/ActivateInvitationPage.tsx';
-import { RegisterPage } from './pages/RegisterPage';
+import  RegisterPage  from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { MonitorPage } from './pages/MonitorPage';
 
