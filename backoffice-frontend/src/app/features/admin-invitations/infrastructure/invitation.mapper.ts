@@ -6,6 +6,7 @@ export const InvitationMapper = {
     return {
       id: dto.id,
       email: dto.email,
+      code: dto.code,
       role: dto.role as any,
       status: (dto.status ?? 'PENDING').toUpperCase() as any,
       expiresAt: dto.expiresAt ?? dto.expires_at ?? '',

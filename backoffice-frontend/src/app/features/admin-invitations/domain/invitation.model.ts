@@ -5,6 +5,7 @@ export type InvitationId = string;
 export interface Invitation {
   id: InvitationId;
   email: string;
+  code: string;
   role: BackofficeRole;
   expiresAt: string; // ISO
   createdAt: string; // ISO

@@ -3,6 +3,7 @@ export type InvitationDto = {
   email: string;
   role: string;
   status?: string;
+  code: string;
 
   // soporta camel o snake
   expiresAt?: string;
