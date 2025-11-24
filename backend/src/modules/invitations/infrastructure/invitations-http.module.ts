@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { InvitationRepository } from '../domain/invitation.repository';
 import { InMemoryInvitationRepository } from './invitation-inmemory.repository';
 import { ValidateInvitationUseCase } from '../application/validate-invitation.usecase';
+import { ListInvitationsUseCase } from '../application/list-invitations.usecase';
 import { AdminInvitationsController } from './admin-invitations.controller';
 import { CreateInvitationUseCase } from '../application/create-invitation.usecase';
 import { SimpleInvitationCodeGenerator } from './simple-invitation-code.generator';
@@ -39,7 +40,13 @@ class SimpleIdGenerator {
         ),
       inject: ['InvitationRepository'],
     },
+    {
+      provide: ListInvitationsUseCase,
+      useFactory: (repo: InvitationRepository) => 
+        new ListInvitationsUseCase(repo),
+      inject: [ 'InvitationRepository']
+    }
   ],
-  exports: ['InvitationRepository', ValidateInvitationUseCase],
+  exports: ['InvitationRepository', ValidateInvitationUseCase, ListInvitationsUseCase],
 })
 export class InvitationsHttpModule {}

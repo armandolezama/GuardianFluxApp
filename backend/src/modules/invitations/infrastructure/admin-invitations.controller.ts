@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UseGuards,
   BadRequestException,
@@ -13,6 +14,7 @@ import { CreateInvitationUseCase } from '../application/create-invitation.usecas
 import { InvalidInvitationExpirationError } from '../domain/errors';
 import { Request } from 'express';
 import { Role } from '../../users/domain/role.enum';
+import { ListInvitationsUseCase } from '../application/list-invitations.usecase';
 
 class CreateInvitationDto {
   email?: string;
@@ -26,6 +28,7 @@ class CreateInvitationDto {
 export class AdminInvitationsController {
   constructor(
     private readonly createInvitationUseCase: CreateInvitationUseCase,
+    private readonly listInvitations: ListInvitationsUseCase,
   ) {}
 
   @Post()
@@ -54,5 +57,10 @@ export class AdminInvitationsController {
       }
       throw err;
     }
+  }
+
+    @Get()
+  async findAll() {
+    return this.listInvitations.execute();
   }
 }

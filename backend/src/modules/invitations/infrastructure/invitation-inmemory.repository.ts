@@ -27,7 +27,7 @@ const initialInvitations = [
     createdByUserId: 'admin-1',
     // createdAt: now,
   },
-    {
+  {
     id: 'inv-3',
     code: 'INV-USER3',
     email: 'monitor-1@example.com',
@@ -46,27 +46,27 @@ export class InMemoryInvitationRepository implements InvitationRepository {
   private invitations = new Map<string, Invitation>();
 
   constructor() {
-  const now = new Date();
-  const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 días
+    const now = new Date();
+    const future = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 días
 
-  const invs = initialInvitations.map((inv) => {
-    return new Invitation({
-      id: inv.id,
-      code: inv.code,
-      email: inv.email,
-      role: inv.role,
-      status: inv.status,
-      expiresAt: future,
-      usedAt: inv.usedAt,
-      createdByUserId: inv.createdByUserId,
-      createdAt: now,
+    const invs = initialInvitations.map((inv) => {
+      return new Invitation({
+        id: inv.id,
+        code: inv.code,
+        email: inv.email,
+        role: inv.role,
+        status: inv.status,
+        expiresAt: future,
+        usedAt: inv.usedAt,
+        createdByUserId: inv.createdByUserId,
+        createdAt: now,
+      });
     });
-  });
 
-  for(const inv of invs) {
-    this.invitations.set(inv.code, inv);
+    for (const inv of invs) {
+      this.invitations.set(inv.code, inv);
+    }
   }
-}
 
 
   async findByCode(code: string): Promise<Invitation | null> {
@@ -75,5 +75,9 @@ export class InMemoryInvitationRepository implements InvitationRepository {
 
   async save(invitation: Invitation): Promise<void> {
     this.invitations.set(invitation.code, invitation);
+  }
+
+  async findAll(): Promise<Invitation[]> {
+    return Array.from(this.invitations.values());
   }
 }

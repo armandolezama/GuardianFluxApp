@@ -10,7 +10,7 @@ export interface InvitationProps {
   role: Role;
   status: InvitationStatus;
   expiresAt: Date;
-  usedAt?: Date | null;
+  usedAt: Date | null;
   createdByUserId: string;
   createdAt: Date;
 }
@@ -31,7 +31,7 @@ export class Invitation {
   }
 
   get email() {
-    return this.props.email;
+    return this.props.email || '';
   }
 
   get role() {
