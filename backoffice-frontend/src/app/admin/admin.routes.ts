@@ -7,6 +7,7 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: '',
     // tu AdminShell ya envuelve layout
+     loadComponent: () => import('./admin-shell/admin-shell').then(m => m.AdminShell),
     children: [
       {
         path: 'invitations',
