@@ -16,7 +16,7 @@ export function ActivateInvitationForm() {
   };
 
   return (
-    <Box component="form" onSybmit={handleSubmit}>
+    <Box component="form" onSubmit={handleSubmit}>
         <TextField 
           label="Código de invitación"
           value={code}
