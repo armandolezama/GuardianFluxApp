@@ -1,0 +1,84 @@
+/* login.component.scss */
+
+.page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* fondo suave opcional */
+  background: radial-gradient(
+      circle at top left,
+      rgba(63, 81, 181, 0.08),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(0, 150, 136, 0.08),
+      transparent 45%
+    ),
+    #fafafa;
+
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px 22px;
+  box-sizing: border-box;
+  border-radius: 14px;
+
+  /* sombra más limpia (material ya da una, esto la suaviza) */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+
+  mat-card-title {
+    text-align: center;
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; // separa campos/botón
+    margin-top: 6px;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  button {
+    margin-top: 6px;
+    height: 44px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+}
+
+/* utilitaria por si la usas en más lados */
+.w-100 {
+  width: 100%;
+}
+
+.error {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #d32f2f; // rojo material
+  font-weight: 500;
+}
+
+/* pequeños ajustes para pantallas muy chicas */
+@media (max-width: 380px) {
+  .card {
+    padding: 16px;
+    mat-card-title {
+      font-size: 1.2rem;
+    }
+  }
+}

@@ -22,6 +22,7 @@ import { AuthService } from '../../core/auth/services/auth.service';
     MatButtonModule,
   ],
   templateUrl: './login.html',
+  styleUrls: ['./login.scss'],
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
