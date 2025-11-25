@@ -1,0 +1,78 @@
+<section class="page">
+  <h2>Movements (Monitor)</h2>
+
+  <form class="filters" [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type">
+        <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="q">
+      <mat-label>Search</mat-label>
+      <input matInput formControlName="q" placeholder="movement id or masked customer" />
+    </mat-form-field>
+
+    <button mat-stroked-button type="button" (click)="clearFilters()">Clear</button>
+    <button mat-raised-button color="primary" type="button" (click)="refresh()">Refresh</button>
+  </form>
+
+  <div class="list">
+    <div class="loading" *ngIf="loading()">
+      <mat-spinner diameter="28"></mat-spinner>
+      <span>Loading movements...</span>
+    </div>
+
+    <table mat-table [dataSource]="filteredMovements()" *ngIf="!loading()">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="customerMasked">
+        <th mat-header-cell *matHeaderCellDef>Customer</th>
+        <td mat-cell *matCellDef="let row">{{ row.customerMasked ?? '-' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let row">{{ row.type }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Amount</th>
+        <td mat-cell *matCellDef="let row">{{ row.amount | number:'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="currency">
+        <th mat-header-cell *matHeaderCellDef>Currency</th>
+        <td mat-cell *matCellDef="let row">{{ row.currency }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Created</th>
+        <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'medium' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <p class="empty" *ngIf="!loading() && filteredMovements().length === 0">
+      No movements for these filters.
+    </p>
+  </div>
+</section>

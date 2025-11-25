@@ -1,0 +1,33 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 180px 180px 1fr auto auto;
+  gap: 0.75rem;
+  align-items: center;
+
+  .q { min-width: 220px; }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.empty {
+  opacity: 0.7;
+  font-style: italic;
+}

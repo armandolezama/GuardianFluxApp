@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { MovementPort } from '../application/ports/movement.port';
 import { Movement } from '../domain/movement.model';
+import { MovementDto } from './movement.dto';
+import { MovementMapper } from './movement.mapper';
 
 @Injectable()
 export class MovementApiAdapter implements MovementPort {
@@ -10,9 +12,9 @@ export class MovementApiAdapter implements MovementPort {
   private baseUrl = 'http://localhost:3000';
 
   async getAllForMonitor(): Promise<Movement[]> {
-    const dto = await firstValueFrom(
-      this.http.get<any[]>(`${this.baseUrl}/monitor/movements`)
+    const dtos = await firstValueFrom(
+      this.http.get<MovementDto[]>(`${this.baseUrl}/movements/monitor`)
     );
-    return dto as Movement[];
+    return MovementMapper.toDomainList(dtos);
   }
 }
