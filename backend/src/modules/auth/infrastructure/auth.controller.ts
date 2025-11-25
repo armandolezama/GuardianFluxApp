@@ -9,6 +9,7 @@ import { RegisterWithInvitationUseCase } from '../application/register-with-invi
 import {
   InvitationExpiredError,
   InvitationAlreadyUsedError,
+  InvitationNotFoundError,
 } from '../../invitations/domain/errors';
 import { EmailAlreadyInUseError } from '../../users/domain/errors';
 import {
@@ -67,7 +68,8 @@ export class AuthController {
       if (
         err instanceof InvitationExpiredError ||
         err instanceof InvitationAlreadyUsedError ||
-        err instanceof EmailAlreadyInUseError
+        err instanceof EmailAlreadyInUseError ||
+        err instanceof InvitationNotFoundError
       ) {
         throw new BadRequestException(err.message);
       }
