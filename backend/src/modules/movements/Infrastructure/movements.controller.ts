@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   BadRequestException,
   UseGuards,
@@ -16,6 +17,9 @@ import {
   UnauthorizedAccountAccessError
 } from '../domain/errors';
 import { Request as ExpressRequest } from 'express';
+import { ListMovementsForMonitorUseCase } from '../application/list-movements-for-monitor.usecase';
+import { Roles } from '../../auth/infrastructure/roles.decorator';
+import { Role } from '../../users/domain/role.enum';
 // import { Roles } from '../../auth/infrastructure/roles.decorator';
 // import { RolesGuard } from '../../auth/infrastructure/roles.guard';
 
@@ -46,6 +50,7 @@ export class MovementsController {
   constructor(
     private readonly createDepositUseCase: CreateDepositUseCase,
     private readonly createWithdrawalUseCase: CreateWithdrawalUseCase,
+    private readonly listMovementsForMonitorUseCase: ListMovementsForMonitorUseCase,
   ) {}
 
   @Post('deposit')
@@ -125,5 +130,11 @@ export class MovementsController {
       }
       throw err;
     }
+  }
+
+  @Roles(Role.MONITOR)
+  @Get('monitor')
+  async getMovements() {
+    return this.listMovementsForMonitorUseCase.execute();
   }
 }

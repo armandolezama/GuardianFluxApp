@@ -11,7 +11,7 @@ export class InMemoryMovementRepository implements MovementRepository {
   }
 
   // helper para futuro monitor: listar movimientos
-  getAll(): Movement[] {
+  async findAll(): Promise<Movement[]> {
     return this.movements;
   }
 }

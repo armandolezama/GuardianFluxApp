@@ -6,6 +6,7 @@ import { AccountRepository } from '../../accounts/domain/account.repository';
 import { MovementRepository } from '../domain/movement.repository';
 import { CreateDepositUseCase } from '../application/create-deposit.usecase';
 import { CreateWithdrawalUseCase } from '../application/create-withdrawal.usecase';
+import { ListMovementsForMonitorUseCase } from '../application/list-movements-for-monitor.usecase';
 
 class SimpleIdGenerator {
   private counter = 1;
@@ -49,6 +50,12 @@ class SimpleIdGenerator {
         ),
       inject: ['AccountRepository', 'MovementRepository'],
     },
+    {
+      provide: ListMovementsForMonitorUseCase,
+      useFactory: (repo: MovementRepository) => new ListMovementsForMonitorUseCase(repo),
+      inject: ['MovementRepository'],
+    }
   ],
+  exports: ['MovementRepository'],
 })
 export class MovementsHttpModule {}
