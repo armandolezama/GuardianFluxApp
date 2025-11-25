@@ -106,19 +106,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
                         <Button
                             component={RouterLink}
-                            to="/monitor"
-                            color='inherit'
-                            size="small"
-                            sx={{
-                                minWidth: 0,
-                                px: 1,
-                                fontSize: 11,
-                                borderRadius: 1,
-                                height: 24
-                            }}>
-                            Monitor
-                        </Button>
-                        <Button
+                            to="/login"
                             variant='outlined'
                             color='primary'
                             size="small"

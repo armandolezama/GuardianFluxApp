@@ -6,7 +6,8 @@ import { HomePage } from './pages/HomePage';
 import  ActivateInvitationPage  from './pages/ActivateInvitationPage.tsx';
 import  RegisterPage  from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
-import { MonitorPage } from './pages/MonitorPage';
+import { LoginPage } from './pages/LoginPage.tsx';
+import { RequireAuth } from './routes/RequireAuth.tsx';
 
 function App() {
   return (
@@ -15,8 +16,11 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/activate" element={<ActivateInvitationPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/monitor" element={<MonitorPage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route element={<RequireAuth />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Route>
         </Routes>
       </AppLayout>
   );
