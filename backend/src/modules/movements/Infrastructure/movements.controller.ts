@@ -20,8 +20,7 @@ import { Request as ExpressRequest } from 'express';
 import { ListMovementsForMonitorUseCase } from '../application/list-movements-for-monitor.usecase';
 import { Roles } from '../../auth/infrastructure/roles.decorator';
 import { Role } from '../../users/domain/role.enum';
-// import { Roles } from '../../auth/infrastructure/roles.decorator';
-// import { RolesGuard } from '../../auth/infrastructure/roles.guard';
+import { RolesGuard } from '../../auth/infrastructure/roles.guard';
 
 export class CreateDepositDto {
   originAccountNumber!: string;
@@ -44,7 +43,7 @@ interface AuthRequest extends ExpressRequest {
   };
 }
 
-@UseGuards(AuthGuard('jwt')) // Todos los endpoints requieren token
+@UseGuards(AuthGuard('jwt'), RolesGuard) // Todos los endpoints requieren token
 @Controller('movements')
 export class MovementsController {
   constructor(
@@ -53,6 +52,7 @@ export class MovementsController {
     private readonly listMovementsForMonitorUseCase: ListMovementsForMonitorUseCase,
   ) {}
 
+  @Roles(Role.CUSTOMER, Role.CUSTOMER_DEMO)
   @Post('deposit')
   async deposit(
     @Body() body: CreateDepositDto,
@@ -94,6 +94,7 @@ export class MovementsController {
     }
   }
 
+  @Roles(Role.CUSTOMER, Role.CUSTOMER_DEMO)
   @Post('withdraw')
   async withdraw(
     @Body() body: CreateWithdrawalDto,
