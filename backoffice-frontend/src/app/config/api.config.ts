@@ -1,28 +1,20 @@
 import { environment } from '../../environments/environment';
 
-function resolveApiBaseUrl(): string {
-  const envUrl = environment.apiBaseUrl?.trim();
+export function resolveApiBaseUrl(): string {
+  const envValue = (environment.apiBaseUrl ?? '').trim();
 
-  // DEV
-  if (!environment.production) {
-    // Prioriza lo que haya en environment, si no, localhost
-    return envUrl || 'http://localhost:3000';
+  // 1) Si viene algo definido distinto al placeholder, úsalo
+  if (envValue && envValue !== '__API_BASE_URL__') {
+    return envValue;
   }
 
-  // PROD
-  if (envUrl) {
-    // Si quisieras que Angular se conecte a una URL distinta
-    // aunque conviva en el mismo origen, la puedes poner aquí.
-    return envUrl;
-  }
-
-  // Si no definiste nada en env, toma el mismo origin
-  // (útil si Nest sirve /api, /app-angular, /app-react en el mismo host).
+  // 2) Si no viene nada en env, asumimos mismo origin
+  // (útil cuando backend y front están en el mismo dominio)
   if (typeof window !== 'undefined') {
     return window.location.origin;
   }
 
-  // Fallback feo pero seguro si algo raro pasa (SSR, etc.)
+  // 3) Si estamos en un contexto raro (SSR, tests, etc.)
   throw new Error('No se pudo resolver API_BASE_URL');
 }
 
