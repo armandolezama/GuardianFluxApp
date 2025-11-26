@@ -28,6 +28,10 @@ class InMemoryAccountRepository implements AccountRepository {
     return this.accounts.find(a => a.id === id) ?? null;
   }
 
+  async findByUserId(userId: string): Promise<Account[]> {
+    return this.accounts.filter(a => a.userId === userId);
+  }
+
   // Helpers sólo para las pruebas
 
   add(account: Account) {
@@ -44,6 +48,10 @@ class InMemoryMovementRepository implements MovementRepository {
 
   async save(movement: Movement): Promise<void> {
     this.movements.push(movement);
+  }
+
+  async findAll(): Promise<Movement[]> {
+    return this.movements;
   }
 }
 
@@ -99,6 +107,7 @@ describe('CreateDepositUseCase', () => {
       destinationAccountNumber: 'ACC-DEST',
       amount: 200,
       description: 'Pago renta',
+      requestedByUserId: 'user-1',
     });
 
     const updatedOrigin = accountRepo.getByNumber('ACC-ORIG')!;
@@ -137,6 +146,7 @@ describe('CreateDepositUseCase', () => {
         originAccountNumber: 'ACC-ORIG',
         destinationAccountNumber: 'ACC-NO-EXISTS',
         amount: 200,
+        requestedByUserId: 'user-1',
       }),
     ).rejects.toBeInstanceOf(DestinationAccountNotFoundError);
   });
@@ -167,6 +177,7 @@ describe('CreateDepositUseCase', () => {
         originAccountNumber: 'ACC-ORIG',
         destinationAccountNumber: 'ACC-DEST',
         amount: 200,
+        requestedByUserId: 'user-1',
       }),
     ).rejects.toBeInstanceOf(InsufficientFundsError);
   });

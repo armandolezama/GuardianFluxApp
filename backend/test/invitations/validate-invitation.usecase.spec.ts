@@ -22,6 +22,10 @@ class InMemoryInvitationRepository implements InvitationRepository {
     this.invitations.set(invitation.code, invitation);
   }
 
+  async findAll(): Promise<Invitation[]> {
+    return Array.from(this.invitations.values());
+  }
+
   // helper para tests
   add(invitation: Invitation) {
     this.invitations.set(invitation.code, invitation);

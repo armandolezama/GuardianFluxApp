@@ -20,15 +20,20 @@ class InMemoryAccountRepository implements AccountRepository {
     else this.accounts[idx] = account;
   }
 
-  async findByAccountNumber(): Promise<Account | null> {
-    // no lo usamos en estos tests
-    return null;
+  async findByAccountNumber(accountNumber: string): Promise<Account | null> {
+    // aunque no lo uses en estos tests, cumple la firma
+    return this.accounts.find(a => a.accountNumber === accountNumber) ?? null;
   }
 
   async findById(id: string): Promise<Account | null> {
     return this.accounts.find(a => a.id === id) ?? null;
   }
 
+  async findByUserId(userId: string): Promise<Account[]> {
+    return this.accounts.filter(a => a.userId === userId);
+  }
+
+  // Helpers sólo para tests
   add(account: Account) {
     this.accounts.push(account);
   }
@@ -43,6 +48,10 @@ class InMemoryMovementRepository implements MovementRepository {
 
   async save(movement: Movement): Promise<void> {
     this.movements.push(movement);
+  }
+
+  async findAll(): Promise<Movement[]> {
+    return this.movements;
   }
 }
 
@@ -85,6 +94,7 @@ describe('CreateWithdrawalUseCase', () => {
       accountId: 'acc-1',
       amount: 200,
       description: 'Retiro cajero',
+      requestedByUserId: 'user-1',
     });
 
     const updated = accountRepo.getById('acc-1')!;
@@ -106,6 +116,7 @@ describe('CreateWithdrawalUseCase', () => {
       useCase.execute({
         accountId: 'acc-NO-EXISTS',
         amount: 100,
+        requestedByUserId: 'user-1',
       }),
     ).rejects.toBeInstanceOf(AccountNotFoundError);
   });
@@ -125,6 +136,7 @@ describe('CreateWithdrawalUseCase', () => {
       useCase.execute({
         accountId: 'acc-1',
         amount: 200,
+        requestedByUserId: 'user-1',
       }),
     ).rejects.toBeInstanceOf(InsufficientFundsError);
   });

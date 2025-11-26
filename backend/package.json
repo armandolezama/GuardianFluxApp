@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.json",
-    "start": "node dist/main.js",
+    "start": "node dist/src/main.js",
     "start:dev": "ts-node src/main.ts",
     "test": "jest",
     "test:watch": "jest --watch",

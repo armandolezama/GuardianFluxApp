@@ -33,6 +33,10 @@ class InMemoryInvitationRepository implements InvitationRepository {
   add(invitation: Invitation) {
     this.map.set(invitation.code, invitation);
   }
+
+  async findAll() {
+    return Array.from(this.map.values());
+  }
 }
 
 class InMemoryUserRepository implements UserRepository {
@@ -71,8 +75,11 @@ class InMemoryAccountRepository implements AccountRepository {
     return this.accounts.find((a) => a.id === id) ?? null;
   }
 
-  // helper solo para tests
-  findByUserId(userId: string): Account | undefined {
+  async findByUserId(userId: string): Promise<Account[]> {
+    return this.accounts.filter((a) => a.userId === userId);
+  }
+
+  findOneByUserId(userId: string): Account | undefined {
     return this.accounts.find((a) => a.userId === userId);
   }
 }
@@ -158,16 +165,20 @@ describe('RegisterWithInvitationUseCase', () => {
       password: 'secret123',
     });
 
+    if (!('account' in result)) {
+      throw new Error('Expected account for customer registration');
+    }
+
     expect(result.user.email).toBe('armando@example.com');
     expect(result.user.roles).toContain(Role.CUSTOMER);
-    expect(result.account.balance).toBe(0);
+    expect(result.account.balance).toBe(10000);
     expect(result.account.currency).toBe('MXN');
 
     const storedUser = userRepo.getByEmail('armando@example.com');
     expect(storedUser).toBeTruthy();
     expect(storedUser?.passwordHash).toBe('hashed-secret123');
 
-    const account = accountRepo.findByUserId(result.user.id);
+    const account = accountRepo.findOneByUserId(result.user.id);
     expect(account).toBeTruthy();
 
     const updatedInvitation = await invitationRepo.findByCode('INV-OK');
