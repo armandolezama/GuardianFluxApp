@@ -85,3 +85,7 @@ Frontend por defecto en:
 ## Licencia
 
 Proyecto de portafolio / demostración técnica.
+
+## DEMO:
+
+[Demo en Linkedin](https://www.linkedin.com/feed/update/urn:li:ugcPost:7399481023253835776/)
