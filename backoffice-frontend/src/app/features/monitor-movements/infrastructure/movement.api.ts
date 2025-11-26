@@ -5,11 +5,12 @@ import { MovementPort } from '../application/ports/movement.port';
 import { Movement } from '../domain/movement.model';
 import { MovementDto } from './movement.dto';
 import { MovementMapper } from './movement.mapper';
+import { API_BASE_URL } from '../../../config/api.config';
 
 @Injectable()
 export class MovementApiAdapter implements MovementPort {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = `${API_BASE_URL}`;
 
   async getAllForMonitor(): Promise<Movement[]> {
     const dtos = await firstValueFrom(

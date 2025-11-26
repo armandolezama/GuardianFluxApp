@@ -5,11 +5,12 @@ import { InvitationPort } from '../application/ports/invitation.port';
 import { CreateInvitationCommand, Invitation } from '../domain/invitation.model';
 import { InvitationDto } from './invitation.dto';
 import { InvitationMapper } from './invitation.mapper';
+import { API_BASE_URL } from '../../../config/api.config';
 
 @Injectable()
 export class InvitationApiAdapter implements InvitationPort {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000'; // luego a environment
+  private baseUrl = `${API_BASE_URL}`; // luego a environment
 
   async create(cmd: CreateInvitationCommand): Promise<Invitation> {
     const dto = await firstValueFrom(

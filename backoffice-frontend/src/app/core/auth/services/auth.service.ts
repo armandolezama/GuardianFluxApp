@@ -1,6 +1,8 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { API_BASE_URL } from '../../../config/api.config';
+
 
 type LoginResponse = {
   accessToken: string;
@@ -24,7 +26,7 @@ export type BackofficeUser = {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000'; // después lo movemos a environment
+  private baseUrl = API_BASE_URL; // después lo movemos a environment
 
   // ✅ estado mínimo centralizado
   private _currentUser = signal<BackofficeUser | null>(null);
