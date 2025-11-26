@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import RegisterForm from '../componentes/auth/RegisterForm';
+import RegisterForm from '../components/auth/RegisterForm';
 
 export  default function RegisterPage() {
   return (

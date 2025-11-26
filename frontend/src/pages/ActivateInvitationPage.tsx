@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { ActivateInvitationForm } from '../componentes/auth/ActivateInvitationForm';
+import { ActivateInvitationForm } from '../components/auth/ActivateInvitationForm';
 
 export  default function ActivateInvitationPage() {
   return (

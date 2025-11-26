@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
-import AppLayout from "./componentes/layout/AppLayout.tsx";
+import AppLayout from "./components/layout/AppLayout.tsx";
 
 import { HomePage } from "./pages/HomePage";
 import ActivateInvitationPage from "./pages/ActivateInvitationPage.tsx";

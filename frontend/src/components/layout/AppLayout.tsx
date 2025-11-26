@@ -27,7 +27,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     color: 'black',
                     boxShadow: '2',
                     justifyContent: 'center',
-                    
                 }}>
                 <Toolbar
                     sx={{
