@@ -1,26 +1,24 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { InvitationRepository } from '../domain/invitation.repository';
-import { InMemoryInvitationRepository } from './invitation-inmemory.repository';
 import { ValidateInvitationUseCase } from '../application/validate-invitation.usecase';
 import { ListInvitationsUseCase } from '../application/list-invitations.usecase';
 import { AdminInvitationsController } from './admin-invitations.controller';
 import { CreateInvitationUseCase } from '../application/create-invitation.usecase';
 import { SimpleInvitationCodeGenerator } from './simple-invitation-code.generator';
-
-class SimpleIdGenerator {
-  private counter = 1;
-  nextId(): string {
-    return `inv-${this.counter++}`;
-  }
-}
+import { MongoInvitationRepository } from './invitation-mongo.repository';
+import { InvitationDocument, InvitationSchema } from './invitation.schema';
+import { UuidIdGenerator } from '../../../shared/utils/id.generators';
 
 @Module({
-  controllers: [
-    // tu controller público de validate si existe
-    AdminInvitationsController,
+  imports: [
+    MongooseModule.forFeature([
+      { name: InvitationDocument.name, schema: InvitationSchema },
+    ]),
   ],
+  controllers: [AdminInvitationsController],
   providers: [
-    { provide: 'InvitationRepository', useClass: InMemoryInvitationRepository },
+    { provide: 'InvitationRepository', useClass: MongoInvitationRepository },
 
     {
       provide: ValidateInvitationUseCase,
@@ -34,18 +32,19 @@ class SimpleIdGenerator {
       useFactory: (repo: InvitationRepository) =>
         new CreateInvitationUseCase(
           repo,
-          new SimpleIdGenerator(),
+          new UuidIdGenerator('inv'),         // 👈 aquí usamos la utilidad
           new SimpleInvitationCodeGenerator(),
           () => new Date(),
         ),
       inject: ['InvitationRepository'],
     },
+
     {
       provide: ListInvitationsUseCase,
-      useFactory: (repo: InvitationRepository) => 
+      useFactory: (repo: InvitationRepository) =>
         new ListInvitationsUseCase(repo),
-      inject: [ 'InvitationRepository']
-    }
+      inject: ['InvitationRepository'],
+    },
   ],
   exports: ['InvitationRepository', ValidateInvitationUseCase, ListInvitationsUseCase],
 })

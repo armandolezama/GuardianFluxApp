@@ -12,6 +12,7 @@ export class GetAccountsForUserUseCase {
   constructor(private readonly accountRepo: AccountRepository) {}
 
   async execute(input: GetAccountsForUserInput): Promise<GetAccountsForUserOutput> {
+
     const accounts = await this.accountRepo.findByUserId(input.userId);
 
     return { accounts };

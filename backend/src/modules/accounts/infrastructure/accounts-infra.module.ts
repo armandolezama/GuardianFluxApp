@@ -1,19 +1,17 @@
+// backend/src/modules/accounts/infrastructure/accounts-infra.module.ts
 import { Module } from '@nestjs/common';
-import { AccountsController } from './accounts.controller';
-import { GetAccountsForUserUseCase } from '../application/get-accounts-for-user.usecase';
-import { AccountRepository } from '../domain/account.repository';
-import { InMemoryAccountRepository } from './account-inmemory.repository';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AccountDocument, AccountSchema } from './account.schema';
+import { MongoAccountRepository } from './account-mongo.repository';
 
 @Module({
-  controllers: [AccountsController],
+  imports: [
+    MongooseModule.forFeature([
+      { name: AccountDocument.name, schema: AccountSchema },
+    ]),
+  ],
   providers: [
-    { provide: 'AccountRepository', useClass: InMemoryAccountRepository },
-    {
-      provide: GetAccountsForUserUseCase,
-      useFactory: (repo: AccountRepository) =>
-        new GetAccountsForUserUseCase(repo),
-      inject: ['AccountRepository'],
-    },
+    { provide: 'AccountRepository', useClass: MongoAccountRepository },
   ],
   exports: ['AccountRepository'],
 })

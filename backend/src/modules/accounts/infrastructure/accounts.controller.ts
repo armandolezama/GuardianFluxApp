@@ -16,6 +16,7 @@ export class AccountsController {
 
   @Get('me')
   async me(@Req() req: Request) {
+
     const user = req.user as any;
     const result = await this.getAccountsForUser.execute({
       userId: user.userId,

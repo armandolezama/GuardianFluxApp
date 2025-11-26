@@ -1,25 +1,26 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UuidIdGenerator } from '../../../shared/utils/id.generators';
 import { MovementsController } from './movements.controller';
 import { AccountsInfraModule } from '../../accounts/infrastructure/accounts-infra.module';
-import { InMemoryMovementRepository } from './movement-inmemory.repository';
 import { AccountRepository } from '../../accounts/domain/account.repository';
 import { MovementRepository } from '../domain/movement.repository';
 import { CreateDepositUseCase } from '../application/create-deposit.usecase';
 import { CreateWithdrawalUseCase } from '../application/create-withdrawal.usecase';
 import { ListMovementsForMonitorUseCase } from '../application/list-movements-for-monitor.usecase';
-
-class SimpleIdGenerator {
-  private counter = 1;
-  nextId(): string {
-    return `mov-${this.counter++}`;
-  }
-}
+import { MongoMovementRepository } from './movement-mongo.repository';
+import { MovementDocument, MovementSchema } from './movement.schema';
 
 @Module({
-  imports: [AccountsInfraModule],
+  imports: [
+    AccountsInfraModule,
+    MongooseModule.forFeature([
+      { name: MovementDocument.name, schema: MovementSchema },
+    ]),
+  ],
   controllers: [MovementsController],
   providers: [
-    { provide: 'MovementRepository', useClass: InMemoryMovementRepository },
+    { provide: 'MovementRepository', useClass: MongoMovementRepository },
 
     {
       provide: CreateDepositUseCase,
@@ -30,7 +31,7 @@ class SimpleIdGenerator {
         new CreateDepositUseCase(
           accountRepo,
           movementRepo,
-          new SimpleIdGenerator(),
+          new UuidIdGenerator('mov'),
           () => new Date(),
         ),
       inject: ['AccountRepository', 'MovementRepository'],
@@ -45,16 +46,18 @@ class SimpleIdGenerator {
         new CreateWithdrawalUseCase(
           accountRepo,
           movementRepo,
-          new SimpleIdGenerator(),
+          new UuidIdGenerator('mov'),
           () => new Date(),
         ),
       inject: ['AccountRepository', 'MovementRepository'],
     },
+
     {
       provide: ListMovementsForMonitorUseCase,
-      useFactory: (repo: MovementRepository) => new ListMovementsForMonitorUseCase(repo),
+      useFactory: (repo: MovementRepository) =>
+        new ListMovementsForMonitorUseCase(repo),
       inject: ['MovementRepository'],
-    }
+    },
   ],
   exports: ['MovementRepository'],
 })

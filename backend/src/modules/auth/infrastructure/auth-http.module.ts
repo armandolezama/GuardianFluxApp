@@ -1,55 +1,59 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-// import { APP_GUARD } from '@nestjs/core'; // opcional si quieres RolesGuard global
+import { UuidIdGenerator } from '../../../shared/utils/id.generators';
 import { AuthController } from './auth.controller';
 import { InvitationsHttpModule } from '../../invitations/infrastructure/invitations-http.module';
-import { InMemoryUserRepository } from '../../users/infrastructure/user-inmemory.repository';
 import { AccountsInfraModule } from '../../accounts/infrastructure/accounts-infra.module';
+import { UsersInfraModule } from '../../users/infrastructure/users-infra.module';
 import { ValidateInvitationUseCase } from '../../invitations/application/validate-invitation.usecase';
 import { InvitationRepository } from '../../invitations/domain/invitation.repository';
 import { UserRepository } from '../../users/domain/user.repository';
 import { AccountRepository } from '../../accounts/domain/account.repository';
-import { RegisterWithInvitationUseCase } from '../application/register-with-invitation.usecase';
+import { AccountNumberGenerator, RegisterWithInvitationUseCase } from '../application/register-with-invitation.usecase';
 import { BcryptPasswordHasher } from './bcrypt-password-hasher';
 import { PasswordHasher } from '../domain/password-hasher';
 import { LoginWithEmailAndPasswordUseCase } from '../application/login-with-email-and-password.usecase';
 import { JwtStrategy } from './jwt.strategy';
-// import { RolesGuard } from './roles.guard';
 
-class SimpleIdGenerator {
-  private counter = 1;
-  nextId(): string {
-    return `id-${this.counter++}`;
-  }
-}
-
-class SimpleAccountNumberGenerator {
-  private counter = 1000;
+class SimpleAccountNumberGenerator implements AccountNumberGenerator {
   generate(): string {
-    return `ACC-${this.counter++}`;
+    // 9 dígitos pseudo-aleatorios
+    const random = Math.floor(Math.random() * 1_000_000_000)
+      .toString()
+      .padStart(9, '0');
+
+    return `ACC-${random}`;
   }
 }
+
+const jwtExpiresIn: number | undefined =
+  process.env.JWT_EXPIRES_IN !== undefined
+    ? Number(process.env.JWT_EXPIRES_IN)
+    : 3600; // 3600 segundos = 1 hora
 
 @Module({
   imports: [
     InvitationsHttpModule,
     AccountsInfraModule,
+    UsersInfraModule,
     PassportModule,
     JwtModule.register({
-      secret: 'guardianflux-dev-secret', // TODO env
-      signOptions: { expiresIn: '1h' },
+      secret: process.env.JWT_SECRET ?? 'guardianflux-dev-secret',
+      signOptions: {
+        expiresIn: jwtExpiresIn,
+      },
     }),
   ],
   controllers: [AuthController],
   providers: [
-    // Repos
-    { provide: 'UserRepository', useClass: InMemoryUserRepository },
-
     // Hasher
     {
       provide: 'PasswordHasher',
-      useFactory: () => new BcryptPasswordHasher(10),
+      useFactory: () =>
+        new BcryptPasswordHasher(
+          Number(process.env.BCRYPT_SALT_ROUNDS ?? 10),
+        ),
     },
 
     // Casos de uso
@@ -68,7 +72,7 @@ class SimpleAccountNumberGenerator {
           userRepo,
           accountRepo,
           passwordHasher,
-          new SimpleIdGenerator(),
+          new UuidIdGenerator('user'),
           new SimpleAccountNumberGenerator(),
           () => new Date(),
         ),
@@ -85,19 +89,22 @@ class SimpleAccountNumberGenerator {
       useFactory: (
         userRepo: UserRepository,
         passwordHasher: PasswordHasher,
-      ) => new LoginWithEmailAndPasswordUseCase(userRepo, passwordHasher),
+      ) =>
+        new LoginWithEmailAndPasswordUseCase(
+          userRepo,
+          passwordHasher,
+        ),
       inject: ['UserRepository', 'PasswordHasher'],
     },
 
     // Strategy JWT
     JwtStrategy,
 
-    // Opcional: hacer RolesGuard global
+    // Opcional: RolesGuard global
     // {
     //   provide: APP_GUARD,
     //   useClass: RolesGuard,
     // },
-    // Si prefieres, lo puedes usar por controlador y no global.
   ],
 })
 export class AuthHttpModule {}
