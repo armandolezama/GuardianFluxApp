@@ -90,9 +90,6 @@ export function LoginPage() {
 
       const data = await response.json();
 
-      console.log(data);
-      
-
       // Guarda el token (ajusta según el shape de la respuesta de tu API)
       if (data.accessToken) {
         localStorage.setItem('accessToken', data.accessToken);
