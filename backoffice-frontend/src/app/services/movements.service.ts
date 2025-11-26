@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({ providedIn: 'root' })
 export class MovementsService {
-  private readonly baseUrl = `${API_BASE_URL}/api`; // o directamente /movements, etc.
+  private readonly baseUrl = `${API_BASE_URL}`;
 
   constructor(private http: HttpClient) {}
 

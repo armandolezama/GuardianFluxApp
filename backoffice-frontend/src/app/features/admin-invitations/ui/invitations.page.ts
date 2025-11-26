@@ -23,7 +23,6 @@ import { BackofficeRole } from '../../shared/domain/role.enum';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
