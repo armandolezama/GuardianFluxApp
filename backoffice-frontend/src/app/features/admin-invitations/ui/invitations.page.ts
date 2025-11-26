@@ -47,11 +47,11 @@ export class InvitationsPage {
   loadingList = signal(false);
   creating = signal(false);
 
-  roles: BackofficeRole[] = ['ADMIN', 'MONITOR'];
+  roles: BackofficeRole[] = ['ADMIN', 'MONITOR', 'CUSTOMER', 'CUSTOMER_DEMO'];
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    role: ['MONITOR' as BackofficeRole, Validators.required],
+    role: ['CUSTOMER_DEMO' as BackofficeRole, Validators.required],
     expiresAt: [null as Date | null, Validators.required],
   });
 
