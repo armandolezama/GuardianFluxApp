@@ -6,6 +6,7 @@ import { AuthHttpModule } from './modules/auth/infrastructure/auth-http.module';
 import { MovementsHttpModule } from './modules/movements/Infrastructure/movements-http.module';
 import { DatabaseModule } from './database/database.module';
 import { AccountsHttpModule } from './modules/accounts/infrastructure/accounts-http.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -15,5 +16,6 @@ import { AccountsHttpModule } from './modules/accounts/infrastructure/accounts-h
     MovementsHttpModule,
     AccountsHttpModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
